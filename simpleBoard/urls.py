@@ -16,6 +16,18 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from board import views
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', views.home),
+    url(r'^show_write_form/$', views.show_write_form),   
+    url(r'^DoWriteBoard/$', views.DoWriteBoard),
+    url(r'^viewWork/$', views.viewWork),
+    url(r'^listSpecificPageWork/$', views.listSpecificPageWork),
+    url(r'^listSpecificPageWork_to_update/$', views.listSpecificPageWork_to_update),
+    url(r'^updateBoard/$', views.updateBoard),       
+    url(r'^DeleteSpecificRow/$', views.DeleteSpecificRow),
+    url(r'^searchWithSubject/$', views.searchWithSubject),
+    url(r'^listSearchedSpecificPageWork/$', views.listSearchedSpecificPageWork),
 ]
