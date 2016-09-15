@@ -1,14 +1,14 @@
-{% comment %}
+<!--{% comment %}
 totalCnt: <strong>{{ totalCnt }}</strong> current_page: <strong>{{ current_page }}</strong> boardList: <strong>{{ boardList|length }}</strong>
-{% endcomment %}
+{% endcomment %}-->
 
-<table cellspacing=1 width=700 border=0>
+<!--<table cellspacing=1 width=700 border=0>
     <tr>
-        <td>총 게시물수: {{ totalCnt }}</td>
-        <td><p align=right> 페이지:{{ current_page }} 
+        <td>총 게시물수: {{ boards.count }}</td>
+        <td><p align=right> 페이지:{{ boards.current }} 
         </td>
     </tr>
-</table>
+</table>-->
 
 <table cellspacing=1 width=700 border=1>
     <tr>
@@ -24,9 +24,9 @@ totalCnt: <strong>{{ totalCnt }}</strong> current_page: <strong>{{ current_page 
         </td>
     </tr>
 
-    {% if boardList %}
+    {% if boards %}
         <ul>
-            {% for boardRow in boardList %}     
+            {% for boardRow in boards %}     
             <tr>
             <td width=50><p align=center>{{ boardRow.id }}</p></td>
             <td width=100><p align=center>{{ boardRow.name }}</p></td>                
@@ -46,26 +46,21 @@ totalCnt: <strong>{{ totalCnt }}</strong> current_page: <strong>{{ current_page 
 </table>
 
 
-<table cellspacing=1 width=700 border=1 >
-    <tr>
-        <td>        
-        {% for page in totalPageList %}
-            <a href="/listSpecificPageWork?current_page={{page}}" >
-            [
-            {% ifequal page current_page %}
-                <b>
-            {% endifequal %}
-            {{page}}
-                       
-            {% ifequal page current_page  %}
-                </b>
-            {% endifequal %}            
-            ]               
-        {% endfor %}                 
-        </td>
-    </tr>
-</table>
+<div class="pagination">
+    <span class="step-links">
+        {% if boards.has_previous %}
+            <a href="?page={{ boards.previous_page_number }}">previous</a>
+        {% endif %}
 
+        <span class="current">
+            Page {{ boards.number }} of {{ boards.paginator.num_pages }}.
+        </span>
+
+        {% if boards.has_next %}
+            <a href="?page={{ boards.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 
 
 <table width=700>

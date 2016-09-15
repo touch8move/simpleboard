@@ -3,12 +3,14 @@
 #from django.template.loader import get_template  
 #from django.template import Template, Context  
 #from django.http import Http404, HttpResponse  
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.utils import timezone
 from board.models import DjangoBoard
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from board.pagingHelper import pagingHelper
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #from django.core.urlresolvers import reverse
 
 # 한글!!
@@ -21,17 +23,32 @@ def home(request):
     #url = '/listSpecificPageWork?current_page=1' 
     #return HttpResponseRedirect(url)  
 
-    boardList = DjangoBoard.objects.order_by('-id')[0:2]        
-    current_page =1
-    totalCnt = DjangoBoard.objects.all().count() 
+    # boardList = DjangoBoard.objects.order_by('-id')[0:2]
+    boardList = DjangoBoard.objects.all()        
+    # current_page =1
+    # totalCnt = DjangoBoard.objects.all().count() 
     
-    pagingHelperIns = pagingHelper();
-    totalPageList = pagingHelperIns.getTotalPageList( totalCnt, rowsPerPage)
-    print ('totalPageList', totalPageList)
+    # pagingHelperIns = pagingHelper();
+    # totalPageList = pagingHelperIns.getTotalPageList( totalCnt, rowsPerPage)
+    # print ('totalPageList', totalPageList)
+    
+    paginator = Paginator(boardList, 2) # Show 25 contacts per page
+
+    page = request.GET.get('page')
+    try:
+        boards = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        boards = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        boards = paginator.page(paginator.num_pages)
+
+    return render(request, 'listSpecificPage.html', {'boards': boards})
 
     
-    return render_to_response('listSpecificPage.html', {'boardList': boardList, 'totalCnt': totalCnt, 
-                                                        'current_page':current_page ,'totalPageList':totalPageList} ) 
+    # return render_to_response('listSpecificPage.html', {'boardList': boardList, 'totalCnt': totalCnt, 
+                                                        # 'current_page':current_page ,'totalPageList':totalPageList} ) 
     
 #===========================================================================================
 def show_write_form(request):
@@ -80,7 +97,7 @@ def listSpecificPageWork(request):
     # 페이지를 가지고 범위 데이터를 조회한다 => raw SQL 사용함
     boardList = DjangoBoard.objects.raw('SELECT Z.* FROM(SELECT X.*, ceil( rownum / %s ) as page FROM ( SELECT ID,SUBJECT,NAME, CREATED_DATE, MAIL,MEMO,HITS \
                                         FROM BOARD_DJANGOBOARD  ORDER BY ID DESC ) X ) Z WHERE page = %s', [rowsPerPage, current_page])
-        
+    # boardList = DjangoBoard.objects.    
     print  ('boardList=',boardList, 'count()=', totalCnt)
     
     # 전체 페이지를 구해서 전달...
