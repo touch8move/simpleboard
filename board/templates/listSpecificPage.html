@@ -65,7 +65,7 @@ totalCnt: <strong>{{ totalCnt }}</strong> current_page: <strong>{{ current_page 
 
 <table width=700>
     <tr>
-        <td><input type=button value="글쓰기"  OnClick="window.location='/show_write_form'">    </td>
+        <td><input type=button value="글쓰기" onclick="location.href={% url 'new_board' %}"></td>
         <td><form name=searchf method=post action="/searchWithSubject/"> 
             <p align=right><input type=text name=searchStr size=50  maxlength=50>
             <input type=submit value="글찾기"></p>

@@ -28,19 +28,39 @@
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <title>게시판 글쓰기</title>
 </head>
-<table width=700 border=1 cellspacing=0 cellpadding=5>
+<!--<table width=700 border=1 cellspacing=0 cellpadding=5>
 <form name=writeform method=post action="/DoWriteBoard/">
 <tr><td><b>이름</b></td><td><input type=text name=name size=50  maxlength=50></td></tr>
 <tr><td><b>이메일</b></td><td><input type=text name=email size=50  maxlength=50></td></tr>
 <tr><td><b>제목</b></td><td><input type=text name=subject size=50  maxlength=50></td></tr>
 <tr><td><b>내용</b></td><td><textarea name=memo cols=50 rows=10></textarea></td></tr>
-</form>
-</table>
+</form>-->
+
+
+
+<!--</table>
 
 <table width=700 border=1 cellspacing=0 cellpadding=0>
 <tr><td>
 
-<input type=button value="등록" OnClick="javascript:writeCheck();">
+<input type=button value="등록" OnClick="javascript:writeCheck();">-->
 
-</td></tr>
-</table> 
+<!--</td></tr>-->
+<!--</table> -->
+
+<form method='POST' action="{% url 'new_board' %}">
+    {% csrf_token %}
+    <div>{{form.subject}}</div>
+    <!--{% if form.subject.errors %}
+        <div class="form-group has-error">
+            <div class="help-block">{{ form.subject.errors }}</div>
+        </div>
+    {% endif %}-->
+    <div>{{form.name}}</div>
+    <div>{{form.mail}}</div>
+    <div>{{form.contents}}</div>
+    <div>
+        <input type='submit' name='submit' value='글쓰기'>
+        <input type='button' name='뒤로' value='뒤로' onclick='window.history.back()'>
+    </div>
+</form>

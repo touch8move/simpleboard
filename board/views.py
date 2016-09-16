@@ -3,13 +3,13 @@
 #from django.template.loader import get_template  
 #from django.template import Template, Context  
 #from django.http import Http404, HttpResponse  
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render_to_response, render, redirect
 from django.utils import timezone
-from board.models import DjangoBoard
+from board.models import Board
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from board.pagingHelper import pagingHelper
-
+from board.forms import BoardForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #from django.core.urlresolvers import reverse
 
@@ -19,68 +19,79 @@ rowsPerPage = 2
  
 
 def home(request):   
-    #OK
-    #url = '/listSpecificPageWork?current_page=1' 
-    #return HttpResponseRedirect(url)  
-
-    # boardList = DjangoBoard.objects.order_by('-id')[0:2]
-    boardList = DjangoBoard.objects.all()        
-    # current_page =1
-    # totalCnt = DjangoBoard.objects.all().count() 
     
-    # pagingHelperIns = pagingHelper();
-    # totalPageList = pagingHelperIns.getTotalPageList( totalCnt, rowsPerPage)
-    # print ('totalPageList', totalPageList)
-    
+    boardList = Board.objects.order_by('-id')        
     paginator = Paginator(boardList, 2) # Show 25 contacts per page
 
     page = request.GET.get('page')
     try:
         boards = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
         boards = paginator.page(1)
     except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
         boards = paginator.page(paginator.num_pages)
+    return render(request, 'lists.html', {'boards': boards})
 
-    return render(request, 'listSpecificPage.html', {'boards': boards})
-
-    
-    # return render_to_response('listSpecificPage.html', {'boardList': boardList, 'totalCnt': totalCnt, 
-                                                        # 'current_page':current_page ,'totalPageList':totalPageList} ) 
-    
 #===========================================================================================
-def show_write_form(request):
-    return render_to_response('writeBoard.html')  
+def write(request):
+    form = BoardForm(data=request.POST)
+    if form.is_valid():
+        board_ = form.save()
+        # print ("ID", board_.id)
+        # board_.save()
+        # board_.object.id
+        return redirect(board_)
+    return render(request, 'writeBoard.html', {"form": form})  
 
 #===========================================================================================
 @csrf_exempt
 def DoWriteBoard(request):
-    br = DjangoBoard (subject = request.POST['subject'],
-                      name = request.POST['name'],
-                      mail = request.POST['email'],
-                      memo = request.POST['memo'],
-                      created_date = timezone.now(),
-                      hits = 0
-                     )
-    br.save()
+    # br = Board (subject = request.POST['subject'],
+    #                   name = request.POST['name'],
+    #                   mail = request.POST['email'],
+    #                   memo = request.POST['memo'],
+    #                   created_date = timezone.now(),
+    #                   hits = 0
+    #                  )
+    # br.save()
+
+    form = BoardForm(data=request.POST)
+    if form.is_valid():
+        # list_ = List.objects.create()
+        board = form.save()
+        return redirect(board)
+    return render(request, 'home.html')
+
     
     # 다시 조회    
     url = '/listSpecificPageWork?current_page=1' 
     return HttpResponseRedirect(url)    
+
+
+def view(request, board_id):
+    # list_ = List.objects.get(id=list_id)
+    board_ = Board.objects.get(id=board_id)
+    # form = ExistingListItemForm(for_list=list_)
+    # if request.method == 'POST':
+        # form = ExistingListItemForm(for_list=list_, data=request.POST)
+        # if form.is_valid():
+            # form.save()
+            # return redirect(list_)
+    # return render(request, 'list.html', {'list': list_, "form": form})
+    return render(request, 'viewMemo.html', {'board':board_})
+
                    
 
 #===========================================================================================
 def viewWork(request):
     pk= request.GET['memo_id']    
     #print 'pk='+ pk
-    boardData = DjangoBoard.objects.get(id=pk)
+    boardData = Board.objects.get(id=pk)
     #print boardData.memo
     
     # Update DataBase
     print ('boardData.hits', boardData.hits)
-    DjangoBoard.objects.filter(id=pk).update(hits = boardData.hits + 1)
+    Board.objects.filter(id=pk).update(hits = boardData.hits + 1)
       
     return render_to_response('viewMemo.html', {'memo_id': request.GET['memo_id'], 
                                                 'current_page':request.GET['current_page'], 
@@ -90,14 +101,14 @@ def viewWork(request):
 #===========================================================================================
 def listSpecificPageWork(request):    
     current_page = request.GET['current_page']
-    totalCnt = DjangoBoard.objects.all().count()                  
+    totalCnt = Board.objects.all().count()                  
     
     print ('current_page=', current_page)
         
     # 페이지를 가지고 범위 데이터를 조회한다 => raw SQL 사용함
-    boardList = DjangoBoard.objects.raw('SELECT Z.* FROM(SELECT X.*, ceil( rownum / %s ) as page FROM ( SELECT ID,SUBJECT,NAME, CREATED_DATE, MAIL,MEMO,HITS \
-                                        FROM BOARD_DJANGOBOARD  ORDER BY ID DESC ) X ) Z WHERE page = %s', [rowsPerPage, current_page])
-    # boardList = DjangoBoard.objects.    
+    boardList = Board.objects.raw('SELECT Z.* FROM(SELECT X.*, ceil( rownum / %s ) as page FROM ( SELECT ID,SUBJECT,NAME, CREATED_DATE, MAIL,MEMO,HITS \
+                                        FROM BOARD_Board  ORDER BY ID DESC ) X ) Z WHERE page = %s', [rowsPerPage, current_page])
+    # boardList = Board.objects.    
     print  ('boardList=',boardList, 'count()=', totalCnt)
     
     # 전체 페이지를 구해서 전달...
@@ -117,12 +128,12 @@ def listSpecificPageWork_to_update(request):
     current_page = request.GET['current_page']
     searchStr = request.GET['searchStr']
     
-    #totalCnt = DjangoBoard.objects.all().count()
+    #totalCnt = Board.objects.all().count()
     print ('memo_id', memo_id)
     print ('current_page', current_page)
     print ('searchStr', searchStr)
     
-    boardData = DjangoBoard.objects.get(id=memo_id)
+    boardData = Board.objects.get(id=memo_id)
       
     return render_to_response('viewForUpdate.html', {'memo_id': request.GET['memo_id'], 
                                                 'current_page':request.GET['current_page'], 
@@ -142,7 +153,7 @@ def updateBoard(request):
     print ('searchStr', searchStr)
     
     # Update DataBase
-    DjangoBoard.objects.filter(id=memo_id).update(
+    Board.objects.filter(id=memo_id).update(
                                                   mail= request.POST['mail'],
                                                   subject= request.POST['subject'],
                                                   memo= request.POST['memo']
@@ -161,12 +172,12 @@ def DeleteSpecificRow(request):
     print ('memo_id', memo_id)
     print ('current_page', current_page)
     
-    p = DjangoBoard.objects.get(id=memo_id)
+    p = Board.objects.get(id=memo_id)
     p.delete()
     
     # Display Page    
     # 마지막 메모를 삭제하는 경우, 페이지를 하나 줄임.
-    totalCnt = DjangoBoard.objects.all().count()  
+    totalCnt = Board.objects.all().count()  
     pagingHelperIns = pagingHelper();
     
     totalPageList = pagingHelperIns.getTotalPageList( totalCnt, rowsPerPage)
@@ -198,18 +209,18 @@ def listSearchedSpecificPageWork(request):
     pageForView = request.GET['pageForView']
     print ('listSearchedSpecificPageWork:searchStr', searchStr, 'pageForView=', pageForView)
         
-    #boardList = DjangoBoard.objects.filter(subject__contains=searchStr)
+    #boardList = Board.objects.filter(subject__contains=searchStr)
     #print  'boardList=',boardList
     
-    totalCnt = DjangoBoard.objects.filter(subject__contains=searchStr).count()
+    totalCnt = Board.objects.filter(subject__contains=searchStr).count()
     print  ('totalCnt=',totalCnt)
     
     pagingHelperIns = pagingHelper();
     totalPageList = pagingHelperIns.getTotalPageList( totalCnt, rowsPerPage)
     
     # like 구문 적용방법 
-    boardList = DjangoBoard.objects.raw("""SELECT Z.* FROM ( SELECT X.*, ceil(rownum / %s) as page \
-        FROM ( SELECT ID,SUBJECT,NAME, CREATED_DATE, MAIL,MEMO,HITS FROM BOARD_DJANGOBOARD \
+    boardList = Board.objects.raw("""SELECT Z.* FROM ( SELECT X.*, ceil(rownum / %s) as page \
+        FROM ( SELECT ID,SUBJECT,NAME, CREATED_DATE, MAIL,MEMO,HITS FROM BOARD_Board \
         WHERE SUBJECT LIKE '%%'||%s||'%%' ORDER BY ID DESC) X ) Z WHERE page = %s""", [rowsPerPage, searchStr, pageForView])
         
     print ('boardList=',boardList)
