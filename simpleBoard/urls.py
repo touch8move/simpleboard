@@ -15,21 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-
+from django.views.generic import RedirectView
 from board import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.home),
-    url(r'^board/', views.home),
-    url(r'^write/', views.write, name='new_board'),
-    url(r'^view/(\d+)/$', views.view, name='board_view'),
-    # url(r'^DoWriteBoard/$', views.DoWriteBoard),
-    url(r'^viewWork/$', views.viewWork),
-    # url(r'^listSpecificPageWork/$', views.listSpecificPageWork),
-    # url(r'^listSpecificPageWork_to_update/$', views.listSpecificPageWork_to_update),
-    # url(r'^updateBoard/$', views.updateBoard),       
-    url(r'^DeleteSpecificRow/$', views.DeleteSpecificRow),
+    url(r'^$', views.home, name='no'),
+    url(r'^board/(\d+)/', views.home, name='home'),
+    url(r'^write/(\d+)/', views.write, name='new_board'),
+    url(r'^modify/(\d+)/(\d+)/', views.modify, name='modify'),
+    url(r'^view/(\d+)/(\d+)/', views.view, name='board_view'),
+    url(r'^delete/(\d+)/(\d+)/', views.delete, name='delete'),
+    url(r'^viewWork/$', views.viewWork),       
     url(r'^searchWithSubject/$', views.searchWithSubject),
-    # url(r'^listSearchedSpecificPageWork/$', views.listSearchedSpecificPageWork),
 ]

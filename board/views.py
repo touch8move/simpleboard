@@ -3,12 +3,11 @@
 #from django.template.loader import get_template  
 #from django.template import Template, Context  
 #from django.http import Http404, HttpResponse  
-from django.shortcuts import render_to_response, render, redirect
+from django.shortcuts import render_to_response, render, redirect, get_object_or_404
 from django.utils import timezone
 from board.models import Board
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
-from board.pagingHelper import pagingHelper
 from board.forms import BoardForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 #from django.core.urlresolvers import reverse
@@ -18,30 +17,47 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 rowsPerPage = 2    
  
 
-def home(request):   
-    
+def home(request, p=1):   
+    if request.path == '/':
+        return redirect('/board/'+str(p))
     boardList = Board.objects.order_by('-id')        
     paginator = Paginator(boardList, 2) # Show 25 contacts per page
 
-    page = request.GET.get('page')
+    # page = request.GET.get('page')
     try:
-        boards = paginator.page(page)
+        boards = paginator.page(p)
     except PageNotAnInteger:
         boards = paginator.page(1)
     except EmptyPage:
         boards = paginator.page(paginator.num_pages)
-    return render(request, 'lists.html', {'boards': boards})
+    return render(request, 'lists.html', {'boards': boards, 'page':p})
 
 #===========================================================================================
-def write(request):
-    form = BoardForm(data=request.POST)
+def write(request, p=1):
+    form = BoardForm(data=request.POST or None)
     if form.is_valid():
         board_ = form.save()
-        # print ("ID", board_.id)
-        # board_.save()
-        # board_.object.id
-        return redirect(board_)
-    return render(request, 'writeBoard.html', {"form": form})  
+        return redirect(board_, page=p)
+    return render(request, 'writeBoard.html', {"form": form, 'page':p})  
+
+def modify(request, board_id, p=1):
+    instance = Board.objects.get(id=board_id)
+    form = BoardForm(request.POST or None, instance=instance)
+    if form.is_valid():
+        board_ = form.save()
+        print ("form success", p)
+        return redirect(board_, page=p)
+    return render(request, 'modifyBoard.html', {"form": form, 'page':p})     
+
+def delete(reqeust, board_id, p=1):
+    board_ = Board.objects.get(id=board_id)
+    board_.delete()
+    return redirect('/board/', page=p)
+
+def view(request, board_id, p=1):
+    board_ = Board.objects.get(id=board_id)
+        
+    return render(request, 'viewBoard.html', {'board':board_, 'page':p})
 
 #===========================================================================================
 @csrf_exempt
@@ -68,17 +84,6 @@ def DoWriteBoard(request):
     return HttpResponseRedirect(url)    
 
 
-def view(request, board_id):
-    # list_ = List.objects.get(id=list_id)
-    board_ = Board.objects.get(id=board_id)
-    # form = ExistingListItemForm(for_list=list_)
-    # if request.method == 'POST':
-        # form = ExistingListItemForm(for_list=list_, data=request.POST)
-        # if form.is_valid():
-            # form.save()
-            # return redirect(list_)
-    # return render(request, 'list.html', {'list': list_, "form": form})
-    return render(request, 'viewMemo.html', {'board':board_})
 
                    
 

@@ -13,7 +13,7 @@
             <tr>
             <td>{{ boardRow.id }}</td>
             <td>{{ boardRow.name }}</td>                
-            <td><a href="{%url 'board_view' boardRow.id %}">{{ boardRow.subject }}</a></td>
+            <td><a href="{% url 'board_view' boardRow.id page %}">{{ boardRow.subject }}</a></td>
             <td>{{ boardRow.created_date }}</td>
             <td>{{ boardRow.hits }}</td>
             </tr>       
@@ -28,7 +28,7 @@
 <div class="pagination">
     <span class="step-links">
         {% if boards.has_previous %}
-            <a href="?page={{ boards.previous_page_number }}">previous</a>
+            <a href="/board/{{ boards.previous_page_number }}/">previous</a>
         {% endif %}
 
         <span class="current">
@@ -36,18 +36,22 @@
         </span>
 
         {% if boards.has_next %}
-            <a href="?page={{ boards.next_page_number }}">next</a>
+            <a href="/board/{{ boards.next_page_number }}/">next</a>
         {% endif %}
     </span>
 </div>
 
 
-<table width=700>
+<!--<table width=700>
     <tr>
-        <td><input type=button value="글쓰기" onclick="location.href={% url 'new_board' %}"></td>
+        <td><input type=button value="글쓰기" onclick="location.href={% url 'new_board' page %}"></td>
         <td><form name=searchf method=post action="/searchWithSubject/"> 
             <p align=right><input type=text name=searchStr size=50  maxlength=50>
             <input type=submit value="글찾기"></p>
         </td>
     </tr>
-</table>
+</table>-->
+<div>
+<button><a href="{% url 'new_board' page%}">글쓰기</a></button>
+<button><a href="{% url 'new_board' page%}">글찾기</a></button> 
+</div>

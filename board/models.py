@@ -11,7 +11,8 @@ class Board(models.Model):
     contents = models.TextField(blank=False)
     hits = models.IntegerField(default=0, blank=False)
 
-    def get_absolute_url(self):
+    def get_absolute_url(self, page):
         # logging.debug('id',self.id)
-        return reverse('board_view', args=[self.id])
+        print("model", page)
+        return reverse('board_view', args=(self.id, page))
         # return reverse('board_view', kwargs={'id':self.id})
