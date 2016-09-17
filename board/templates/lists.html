@@ -13,7 +13,7 @@
             <tr>
             <td>{{ boardRow.id }}</td>
             <td>{{ boardRow.name }}</td>                
-            <td><a href="{% url 'board_view' boardRow.id page %}">{{ boardRow.subject }}</a></td>
+            <td><a href="{% url 'board_view' boardRow.id page %}?searchStr={{searchStr}}">{{ boardRow.subject }}</a></td>
             <td>{{ boardRow.created_date }}</td>
             <td>{{ boardRow.hits }}</td>
             </tr>       
@@ -28,7 +28,7 @@
 <div class="pagination">
     <span class="step-links">
         {% if boards.has_previous %}
-            <a href="/board/{{ boards.previous_page_number }}/">previous</a>
+            <a href="/board/{{ boards.previous_page_number }}?searchStr={{searchStr}}">previous</a>
         {% endif %}
 
         <span class="current">
@@ -36,7 +36,7 @@
         </span>
 
         {% if boards.has_next %}
-            <a href="/board/{{ boards.next_page_number }}/">next</a>
+            <a href="/board/{{ boards.next_page_number }}?searchStr={{searchStr}}">next</a>
         {% endif %}
     </span>
 </div>
@@ -52,6 +52,10 @@
     </tr>
 </table>-->
 <div>
-<button><a href="{% url 'new_board' page%}">글쓰기</a></button>
-<button><a href="{% url 'new_board' page%}">글찾기</a></button> 
+<button><a href="{% url 'new_board' page%}?searchStr={{searchStr}}">글쓰기</a></button>
+<form method='GET'>
+    <input type=text name=searchStr action="{% url 'home' page}" value={{searchStr}}>
+</form>
+<button type="submit">글찾기</button>
+ 
 </div>

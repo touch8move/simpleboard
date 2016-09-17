@@ -21,11 +21,9 @@ from board import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.home, name='no'),
-    url(r'^board/(\d+)/', views.home, name='home'),
-    url(r'^write/(\d+)/', views.write, name='new_board'),
-    url(r'^modify/(\d+)/(\d+)/', views.modify, name='modify'),
-    url(r'^view/(\d+)/(\d+)/', views.view, name='board_view'),
-    url(r'^delete/(\d+)/(\d+)/', views.delete, name='delete'),
-    url(r'^viewWork/$', views.viewWork),       
-    url(r'^searchWithSubject/$', views.searchWithSubject),
+    url(r'^board/(?P<page>\d+)/', views.home, name='home'),
+    url(r'^write/(?P<page>\d+)/', views.write, name='new_board'),
+    url(r'^modify/(?P<board_id>\d+)/(?P<page>\d+)/', views.modify, name='modify'),
+    url(r'^view/(?P<board_id>\d+)/(?P<page>\d+)/', views.view, name='board_view'),
+    url(r'^delete/(?P<board_id>\d+)/(?P<page>\d+)/', views.delete, name='delete'),  
 ]

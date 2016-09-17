@@ -1,4 +1,4 @@
-<form method='POST' action="{% url 'new_board' page %}">
+<form method='POST' action="{% url 'new_board' page %}?searchStr={{searchStr}}">
     {% csrf_token %}
     <div>제목: {{form.subject}}</div>
     <!--{% if form.subject.errors %}
@@ -8,7 +8,7 @@
     {% endif %}-->
     <div>이름: {{form.name}}</div>
     <div>내용: {{form.contents}}</div>
-        <input type='submit' name='submit' value='글쓰기'>
-        <input type='button' name='뒤로' value='뒤로' onclick='window.history.back()'>
+        <button type=submit>작성</button>
+        <button><a href="{% url 'home' page %}?searchStr={{searchStr}}">뒤로</a></button>
     </div>
 </form>

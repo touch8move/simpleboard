@@ -11,8 +11,8 @@
     </div>
 </div>
 <div>
-    <button><a href="{% url 'modify' board.id page %}">수정</a></button>
-    <button><a href="/board/{{page}}">목록</a></button>
-    <button><a href="{% url 'delete' board.id page %}">삭제</a></button>
+    <button><a href="{% url 'modify' board.id page %}?searchStr={{searchStr}}">수정</a></button>
+    <button><a href="/board/{{page}}/?searchStr={{searchStr}}">목록</a></button>
+    <button><a href="{% url 'delete' board.id page %}?searchStr={{searchStr}}">삭제</a></button>
 </div>
 </html>
