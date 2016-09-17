@@ -37,7 +37,8 @@ def write(request, p=1):
     form = BoardForm(data=request.POST or None)
     if form.is_valid():
         board_ = form.save()
-        return redirect(board_, page=p)
+        # return redirect(board_, page=p)
+        return redirect(board_)
     return render(request, 'writeBoard.html', {"form": form, 'page':p})  
 
 def modify(request, board_id, p=1):
@@ -46,17 +47,16 @@ def modify(request, board_id, p=1):
     if form.is_valid():
         board_ = form.save()
         print ("form success", p)
-        return redirect(board_, page=p)
+        return redirect(board_)
     return render(request, 'modifyBoard.html', {"form": form, 'page':p})     
 
 def delete(reqeust, board_id, p=1):
     board_ = Board.objects.get(id=board_id)
     board_.delete()
-    return redirect('/board/', page=p)
+    return redirect(board_)
 
 def view(request, board_id, p=1):
     board_ = Board.objects.get(id=board_id)
-        
     return render(request, 'viewBoard.html', {'board':board_, 'page':p})
 
 #===========================================================================================
