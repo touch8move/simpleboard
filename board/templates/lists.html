@@ -1,3 +1,9 @@
+{% if user.is_authenticated %}
+<div>
+    USER: {{ user.username }} 
+    <button><a href="{% url 'logout' %}">Logout</a></button>
+</div>
+{% endif %}
 <table>
     <tr>
         <td>번호</td>
@@ -52,7 +58,9 @@
     </tr>
 </table>-->
 <div>
+    {% if user is not None %}
 <button><a href="{% url 'new_board' page%}?searchStr={{searchStr}}">글쓰기</a></button>
+{% endif %}
 <form method='GET'>
     <input type=text name=searchStr action="{% url 'home' page}" value={{searchStr}}>
 </form>

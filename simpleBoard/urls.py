@@ -16,14 +16,23 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic import RedirectView
-from board import views
+
+from board.views import home, write, modify, view, delete 
+from account.views import account_login, account_logout, account_add, account_update, account_delete
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.home, name='no'),
-    url(r'^board/(?P<page>\d+)/', views.home, name='home'),
-    url(r'^write/(?P<page>\d+)/', views.write, name='new_board'),
-    url(r'^modify/(?P<board_id>\d+)/(?P<page>\d+)/', views.modify, name='modify'),
-    url(r'^view/(?P<board_id>\d+)/(?P<page>\d+)/', views.view, name='board_view'),
-    url(r'^delete/(?P<board_id>\d+)/(?P<page>\d+)/', views.delete, name='delete'),  
+    url(r'^$', home, name='no'),
+    url(r'^board/(?P<page>\d+)/', home, name='home'),
+    url(r'^write/(?P<page>\d+)/', write, name='new_board'),
+    url(r'^modify/(?P<board_id>\d+)/(?P<page>\d+)/', modify, name='modify'),
+    url(r'^view/(?P<board_id>\d+)/(?P<page>\d+)/', view, name='board_view'),
+    url(r'^delete/(?P<board_id>\d+)/(?P<page>\d+)/', delete, name='delete'),
+
+    # url(r'^account/', account_main, name='account_main'),
+    url(r'^account/login', account_login, name='login'),
+    url(r'^account/logout', account_logout, name='logout'),
+    url(r'^account/create', account_add, name='account_add'),
+    url(r'^account/update', account_update, name='account_update'),
+    url(r'^account/delete', account_delete, name='account_delete'),
 ]

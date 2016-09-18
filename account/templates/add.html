@@ -1,0 +1,19 @@
+<html>
+    <title>Login</title>
+    <body>
+        <form method='POST' action="{% url 'account_add' %}">
+            {% csrf_token %}
+            <div>
+            USERNAME: {{ form.username }}
+            </div>
+            <div>
+            PW: {{ form.password1 }}
+            </div>
+            <div>
+            PW CONFIRM: {{ form.password2 }}
+            </div>
+            {{ form.errors }}
+            <button type=submit>생성</button>
+        </form>
+    </body>
+</html>

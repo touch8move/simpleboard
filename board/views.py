@@ -39,7 +39,7 @@ def home(request, page=1):
         boards = paginator.page(1)
     except EmptyPage:
         boards = paginator.page(paginator.num_pages)
-    return render(request, 'lists.html', {'boards': boards, 'page':page, 'searchStr':searchStr})
+    return render(request, 'lists.html', {'user':request.user,'boards': boards, 'page':page, 'searchStr':searchStr})
 
 #===========================================================================================
 def write(request, page=1):
