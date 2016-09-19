@@ -17,7 +17,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 rowsPerPage = 2    
  
 
-def home(request, page=1):
+def board_home(request, page=1):
     # if searchStr == None:
     searchStr = request.GET.get('searchStr')
        
@@ -39,38 +39,33 @@ def home(request, page=1):
         boards = paginator.page(1)
     except EmptyPage:
         boards = paginator.page(paginator.num_pages)
-    return render(request, 'lists.html', {'user':request.user,'boards': boards, 'page':page, 'searchStr':searchStr})
+    return render(request, 'lists.html', {'user':request.user,'boards': boards, 'searchStr':searchStr})
 
 #===========================================================================================
-def write(request, page=1):
+def board_write(request, page):
+    if not request.user.is_authenticated():
+        return redirect('board_home')
+    board_id = request.GET.get('board_id')
+    instance = None
+    if board_id:
+        instance = Board.objects.get(id=board_id)
     searchStr = request.GET.get('searchStr')
-    form = BoardForm(data=request.POST or None)
+    form = BoardForm(data=request.POST or None, instance=instance or None)
     if form.is_valid():
         board_ = form.save()
-        # return redirect(board_)
-        # return redirect('board_view', board_id=board_.id, page=page)
-        # return HttpResponseRedirect('board_view', {'board_id':board_.id, 'page':page, 'searchStr':searchStr})
-        # return HttpResponseRedirect()
-        return redirect(reverse('board_view', kwarge={'board_id':board_id, 'page':page})+'?searchStr='+searchStr)
+        return redirect(reverse('board_view', kwargs={'board_id':board_.id, 'page':page})+'?searchStr='+searchStr)
     return render(request, 'writeBoard.html', {"form": form, 'page':page, 'searchStr':searchStr})  
 
-def modify(request, board_id, page):
-    searchStr = request.GET.get('searchStr')
-    instance = Board.objects.get(id=board_id)
-    form = BoardForm(request.POST or None, instance=instance)
-    if form.is_valid():
-        board_ = form.save()
-        return redirect('board_view', board_id=board_.id, page=page)
-    return render(request, 'modifyBoard.html', {"form": form, 'page':page, 'searchStr':searchStr})     
-
-def delete(reqeust, board_id, page):
+def board_delete(reqeust, board_id, page):
+    if not request.user.is_authenticated():
+        return redirect('board_home')
     searchStr = reqeust.GET.get('searchStr')
     board_ = Board.objects.get(id=board_id)
     board_.delete()
     # return redirect('board', page=page, searchStr=searchStr)
-    return redirect(reverse('home', kwargs={'page':page})+'?searchStr='+searchStr)
+    return redirect(reverse('board_home', kwargs={'page':page})+'?searchStr='+searchStr)
 
-def view(request, board_id, page):
+def board_view(request, board_id, page):
     searchStr = request.GET.get('searchStr')
     board_ = Board.objects.get(id=board_id)
     board_.hits+=1

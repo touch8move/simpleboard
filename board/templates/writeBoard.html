@@ -1,14 +1,33 @@
-<form method='POST' action="{% url 'new_board' page %}?searchStr={{searchStr}}">
+{% extends 'base.html' %}
+{% block contents %}
+<script src="/static/tinymce/tinymce.min.js"></script>
+<script>
+    tinymce.init({ selector:'textarea' });
+</script>
+<form class="form-horizontal" method='POST' action="{% url 'board_write' page %}?searchStr={{searchStr}}" novalidate>
+    
     {% csrf_token %}
-    <div>제목: {{form.subject}}</div>
-    <!--{% if form.subject.errors %}
-        <div class="form-group has-error">
-            <div class="help-block">{{ form.subject.errors }}</div>
+    <div class="form-group">
+        <label for="id_subject" class="col-sm-2 control-label">제목</label>
+        <div class="col-sm-7">
+            {{form.subject}}
         </div>
-    {% endif %}-->
-    <div>이름: {{form.name}}</div>
-    <div>내용: {{form.contents}}</div>
-        <button type=submit>작성</button>
-        <button><a href="{% url 'home' page %}?searchStr={{searchStr}}">뒤로</a></button>
+    </div>
+    <div class="form-group">
+        <label for="id_name" class="col-sm-2 control-label">이름</label>
+        <div class="col-sm-7">
+            {{form.name}}
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-7">
+            {{form.contents}}
+        </div>
+    </div>
+    <hr>
+    <div>
+        <button class="btn btn-default" type=submit>작성</button>
+        <button class="btn btn-default" onclick="location.href='{% url 'board_home' page %}?searchStr={{searchStr}}'">뒤로</a></button>
     </div>
 </form>
+{% endblock %}

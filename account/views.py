@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from account.forms import UserCreateForm
-from board.views import home
+from board.views import board_home
 # Create your views here.
 
 def account_login(request):

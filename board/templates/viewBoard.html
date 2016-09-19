@@ -1,18 +1,28 @@
-<html>
-<head>
-<title>글보기</title>
-</head>  
+{% extends 'base.html' %}
+{% block title %}글보기{% endblock %}
+{% block contents %}
         
 <div>
 
-    <div>{{board.id}} : {{board.subject}}</div>
-    <div>
-        {{board.contents}}
+    <div class="panel-heading">
+         <h3 class="panel-title">
+            {{board.id}} : {{board.subject}}
+         </h3>
+        <div class="panel-body">
+            {% autoescape off %}
+            {{ board.contents }}
+            {% endautoescape %} 
+        </div>
     </div>
 </div>
+{% if user.is_authenticated %}
 <div>
-    <button><a href="{% url 'modify' board.id page %}?searchStr={{searchStr}}">수정</a></button>
-    <button><a href="/board/{{page}}/?searchStr={{searchStr}}">목록</a></button>
-    <button><a href="{% url 'delete' board.id page %}?searchStr={{searchStr}}">삭제</a></button>
+    <button class="btn btn-default" onclick="location.href='{% url 'board_write' page=page %}?searchStr={{searchStr}}&board_id={{board.id}}'">수정</button>    
+    <button class="btn btn-default" onclick="location.href='{% url 'board_delete' board_id=board.id page=page %}?searchStr={{searchStr}}'">삭제</button>
+</div>
+{% endif %}
+<div>
+    <button class="btn btn-default" onclick="location.href='{% url 'board_home' page=page %}?searchStr={{searchStr}}'">글목록</a></button>
 </div>
 </html>
+{% endblock %}

@@ -1,10 +1,15 @@
+{% extends 'base.html' %}
+{% block contents %}
 {% if user.is_authenticated %}
 <div>
     USER: {{ user.username }} 
-    <button><a href="{% url 'logout' %}">Logout</a></button>
+    <button class="btn btn-default" onclick="location.href='{% url 'logout' %}'">Logout</button>
 </div>
+{% else %}
+    <button class="btn btn-default" onclick="location.href='{% url 'login' %}'">Login</button>
 {% endif %}
-<table>
+
+<table class=table>
     <tr>
         <td>번호</td>
         <td>이름</td>
@@ -19,7 +24,7 @@
             <tr>
             <td>{{ boardRow.id }}</td>
             <td>{{ boardRow.name }}</td>                
-            <td><a href="{% url 'board_view' boardRow.id page %}?searchStr={{searchStr}}">{{ boardRow.subject }}</a></td>
+            <td><a href="{% url 'board_view' boardRow.id boards.number %}?searchStr={{searchStr}}">{{ boardRow.subject }}</a></td>
             <td>{{ boardRow.created_date }}</td>
             <td>{{ boardRow.hits }}</td>
             </tr>       
@@ -29,41 +34,69 @@
         <p>No Data.</p>
     {% endif %}
 </table>
+{% load arithmetic %}
+<div class="text-center">
+    <ul class="pagination">
+        <li>
+            <a href="{% url 'board_home' 1 %}?searchStr={{searchStr}}" {% if not boards.page.has_previous %}disabled{% endif %}>&laquo;</a>
+        </li>
 
+        {% with active_page=boards.number %}
 
-<div class="pagination">
-    <span class="step-links">
-        {% if boards.has_previous %}
-            <a href="/board/{{ boards.previous_page_number }}?searchStr={{searchStr}}">previous</a>
-        {% endif %}
+        {% for page_number in boards.paginator.page_range %}
 
-        <span class="current">
-            Page {{ boards.number }} of {{ boards.paginator.num_pages }}.
-        </span>
+            {# if we're beyond the first five pages, just show "..." until three pages before the current page #}
+            {# e.g. on page 12 show: "... 9 10 11 12" #}
+            {% if boards.number > 5 and page_number < boards.number|sub:4 %}
+                {# nothing to show #}
+            {% elif boards.number > 5 and page_number == boards.number|sub:4 %}
+                {# show '...' #}
+                <!--<li class="disabled">
+                    <a href="{% url 'board_home' boards.number|sub:5 %}?searchStr={{searchStr}}">...</a>
+                </li>-->
 
-        {% if boards.has_next %}
-            <a href="/board/{{ boards.next_page_number }}?searchStr={{searchStr}}">next</a>
-        {% endif %}
-    </span>
+            {# if we're before the last five pages, just show "..." for pages more than three after the current page #}
+            {# e.g. on page 1 of 10 show: "1 2 3 4 ..." #}
+            {% elif boards.number < boards.paginator.num_pages|sub:5 and page_number > boards.number|add:4 %}
+                {# nothing to show #}
+            {% elif boards.number < boards.paginator.num_pages|sub:5 and page_number == boards.number|add:4 %}
+                {# show '...' #}
+                <!--<li class="disabled">
+                    <a href="{% url 'board_home' boards.number|add:5 %}?searchStr={{searchStr}}">...</a>
+                </li>-->
+
+            {% else %}
+                {# show the page number as normal #}
+                <li {% if page_number == boards.number %}class="active"{% endif %} foo="3">
+                    <a href="{% url 'board_home' page_number %}?searchStr={{searchStr}}">{{ page_number }}</a>
+                </li>
+            {% endif %}
+             
+        {% endfor %}
+
+        {% endwith %}
+
+        <li>
+            <a href="{% url 'board_home' boards.paginator.num_pages %}?searchStr={{searchStr}}" {% if not boards.page.has_previous %}disabled{% endif %}>&raquo;</a>
+        </li>
+
+    </ul>
 </div>
 
-
-<!--<table width=700>
-    <tr>
-        <td><input type=button value="글쓰기" onclick="location.href={% url 'new_board' page %}"></td>
-        <td><form name=searchf method=post action="/searchWithSubject/"> 
-            <p align=right><input type=text name=searchStr size=50  maxlength=50>
-            <input type=submit value="글찾기"></p>
-        </td>
-    </tr>
-</table>-->
-<div>
-    {% if user is not None %}
-<button><a href="{% url 'new_board' page%}?searchStr={{searchStr}}">글쓰기</a></button>
+{% if user.is_authenticated %}
+<button class="btn btn-default" onclick="location.href='{% url 'board_write' boards.number %}?searchStr={{searchStr}}'">글쓰기</button>
 {% endif %}
+
+<div>
 <form method='GET'>
-    <input type=text name=searchStr action="{% url 'home' page}" value={{searchStr}}>
+    <div class="input-group">
+        <input class="form-control" placeholder="글찾기" type=text name=searchStr action="{% url 'board_home' boards.number %}" value={{searchStr}}>
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">글찾기</button>
+        </span>
+    </div>
 </form>
-<button type="submit">글찾기</button>
+
  
 </div>
+{% endblock %}

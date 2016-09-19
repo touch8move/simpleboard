@@ -1,16 +1,11 @@
 from django import forms
 from board.models import Board
 class BoardForm(forms.models.ModelForm):
+    
     class Meta:
-        model = Board
-    #     id = models.IntegerField(primary_key=True)
-    # subject = models.CharField(max_length=50, blank=True)
-    # name = models.CharField(max_length=50, blank=True)
-    # created_date = models.DateField(null=True, blank=True)
-    # mail = models.CharField(max_length=50, blank=True)
-    # memo = models.CharField(max_length=200, blank=True)
-    # hits = models.IntegerField(null=True, blank=True) 
+        model = Board 
         fields = ('subject','name','contents',)
+        # attrs={novalidate:'novalidate'}
         widgets = {
             'subject': forms.fields.TextInput(attrs={
                 'placeholder': '제목',
@@ -27,9 +22,3 @@ class BoardForm(forms.models.ModelForm):
                 'class': 'form-control input-lg',
             }),
         }
-        # error_messages = {
-        #     'subject': {'required': EMPTY_ITEM_ERROR}
-        # }
-        # def save():
-    # def save(self):
-        # return super().save()
