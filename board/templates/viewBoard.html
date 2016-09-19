@@ -24,5 +24,38 @@
 <div>
     <button class="btn btn-default" onclick="location.href='{% url 'board_home' page=page %}?searchStr={{searchStr}}'">글목록</a></button>
 </div>
-</html>
+<hr>
+{% if replys.count > 0 %}
+<table class="table">
+{% for reply in replys %}
+    <tr>
+        <td>
+            {{ reply.name }}
+        </td>
+        <td>
+            {{ reply.reply }}
+        </td>
+    </tr>
+{% endfor %}
+</table>
+{% endif %}
+<hr>
+<div>
+<form class="form-inline" method='POST' action="{% url 'reply_write' board_id=board.id page=page %}?searchStr={{searchStr}}" novalidate>
+    {% csrf_token %}
+    <div class="form-group">
+        <div>
+            {{ reply_form.reply }}
+        </div>
+    </div>
+    <hr>
+    <div class="form-group">
+        {{ reply_form.name }}
+    </div>
+    <div class="form-group">
+        {{ reply_form.password }}
+    </div>
+    <button class="btn btn-default" type="submit">입력</button>
+</form>
+</div>
 {% endblock %}

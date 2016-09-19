@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic import RedirectView
 
-from board.views import board_home, board_write, board_view, board_delete 
+from board.views import board_home, board_write, board_view, board_delete, reply_write 
 from account.views import account_login, account_logout, account_add, account_update, account_delete
 
 urlpatterns = [
@@ -34,4 +34,6 @@ urlpatterns = [
     url(r'^account/create', account_add, name='account_add'),
     url(r'^account/update', account_update, name='account_update'),
     url(r'^account/delete', account_delete, name='account_delete'),
+
+    url(r'^reply/write/(?P<board_id>\d+)/(?P<page>\d+)/', reply_write, name='reply_write'),
 ]
