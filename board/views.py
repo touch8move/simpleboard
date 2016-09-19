@@ -51,7 +51,7 @@ def write(request, page=1):
         # return redirect('board_view', board_id=board_.id, page=page)
         # return HttpResponseRedirect('board_view', {'board_id':board_.id, 'page':page, 'searchStr':searchStr})
         # return HttpResponseRedirect()
-        return redirect(reverse('board_view', args=(board_.id,page))+'?searchStr='+searchStr)
+        return redirect(reverse('board_view', kwarge={'board_id':board_id, 'page':page})+'?searchStr='+searchStr)
     return render(request, 'writeBoard.html', {"form": form, 'page':page, 'searchStr':searchStr})  
 
 def modify(request, board_id, page):
@@ -68,7 +68,7 @@ def delete(reqeust, board_id, page):
     board_ = Board.objects.get(id=board_id)
     board_.delete()
     # return redirect('board', page=page, searchStr=searchStr)
-    return redirect(reverse('home', args=(page))+'?searchStr='+searchStr)
+    return redirect(reverse('home', kwargs={'page':page})+'?searchStr='+searchStr)
 
 def view(request, board_id, page):
     searchStr = request.GET.get('searchStr')
