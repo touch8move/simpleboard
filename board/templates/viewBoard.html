@@ -40,22 +40,7 @@
 </table>
 {% endif %}
 <hr>
-<div>
-<form class="form-inline" method='POST' action="{% url 'reply_write' board_id=board.id page=page %}?searchStr={{searchStr}}" novalidate>
-    {% csrf_token %}
-    <div class="form-group">
-        <div>
-            {{ reply_form.reply }}
-        </div>
-    </div>
-    <hr>
-    <div class="form-group">
-        {{ reply_form.name }}
-    </div>
-    <div class="form-group">
-        {{ reply_form.password }}
-    </div>
-    <button class="btn btn-default" type="submit">입력</button>
-</form>
-</div>
+
+{% include 'replyInput.html' %}
 {% endblock %}
+
