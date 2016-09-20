@@ -36,26 +36,8 @@
 </div>
 <hr>
 {% if replys.count > 0 %}
-<div>
-{% for reply in replys %}
-    <div class="row">
-        <div class="col-sm-2">
-            <b>{{ reply.name }}</b> ({{ reply.ipaddress }})
-        </div>
-        <div class="col-sm-9">
-           {% autoescape off %} {{ reply.reply|linebreaks }} {% endautoescape %}
-        </div>
-        <div class="col-sm-1">
-            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-        </div>
-    </div>
-    <hr>
-{% endfor %}
-</div>
+{% include 'replylist.html' %}
 {% endif %}
-
 {% include 'replyInput.html' %}
 {% endblock %}
 
