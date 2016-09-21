@@ -17,16 +17,17 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic import RedirectView
 
-from board.views import board_home, board_write, board_view, board_delete, reply_write 
+from board.views import board_home, board_write, board_view, board_delete, board_edit, reply_write, reply_delete 
 from account.views import account_login, account_logout, account_add, account_update, account_delete
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', board_home, name='no'),
-    url(r'^board/(?P<page>\d+)/', board_home, name='board_home'),
-    url(r'^write/(?P<page>\d+)/', board_write, name='board_write'),
-    url(r'^view/(?P<board_id>\d+)/(?P<page>\d+)/', board_view, name='board_view'),
-    url(r'^delete/(?P<board_id>\d+)/(?P<page>\d+)/', board_delete, name='board_delete'),
+    url(r'^board/', board_home, name='board_home'),
+    url(r'^write/', board_write, name='board_write'),
+    url(r'^edit/(?P<board_id>\d+)/', board_edit, name='board_edit'),
+    url(r'^view/(?P<board_id>\d+)/', board_view, name='board_view'),
+    url(r'^delete/(?P<board_id>\d+)/', board_delete, name='board_delete'),
 
     # url(r'^account/', account_main, name='account_main'),
     url(r'^account/login', account_login, name='login'),
@@ -35,5 +36,6 @@ urlpatterns = [
     url(r'^account/update', account_update, name='account_update'),
     url(r'^account/delete', account_delete, name='account_delete'),
 
-    url(r'^reply/write/(?P<board_id>\d+)/(?P<page>\d+)/', reply_write, name='reply_write'),
+    url(r'^reply/write/(?P<board_id>\d+)/', reply_write, name='reply_write'),
+    url(r'^reply/delete/(?P<board_id>\d+)/', reply_delete, name='reply_delete'),
 ]

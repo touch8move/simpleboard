@@ -1,5 +1,5 @@
 <div>
-<form class="form-inline" method='POST' action="{% url 'reply_write' board_id=board.id page=page %}?searchStr={{searchStr}}" novalidate>
+<form class="form-inline" method='POST' action="{% url 'reply_write' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}" novalidate>
     {% csrf_token %}
     <div class="form-group">
         <div>

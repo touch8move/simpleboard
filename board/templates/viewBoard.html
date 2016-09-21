@@ -15,12 +15,12 @@
 </div>
 {% if user.is_authenticated %}
 <div>
-    <button class="btn btn-default" onclick="location.href='{% url 'board_write' page=page %}?searchStr={{searchStr}}&board_id={{board.id}}'">수정</button>    
-    <button class="btn btn-default" onclick="location.href='{% url 'board_delete' board_id=board.id page=page %}?searchStr={{searchStr}}'">삭제</button>
+    <button class="btn btn-default" onclick="location.href='{% url 'board_edit' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}&board_id={{board.id}}'">수정</button>    
+    <button class="btn btn-default" onclick="location.href='{% url 'board_delete' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}'">삭제</button>
 </div>
 {% endif %}
 <div>
-    <button class="btn btn-default" onclick="location.href='{% url 'board_home' page=page %}?searchStr={{searchStr}}'">글목록</a></button>
+    <button class="btn btn-default" onclick="location.href='{% url 'board_home' %}?page={{page}}&searchStr={{searchStr}}'">글목록</a></button>
 </div>
 <hr>
 {% if replys.count > 0 %}

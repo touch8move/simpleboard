@@ -24,7 +24,7 @@
             <tr>
             <td>{{ boardRow.id }}</td>
             <td>{{ boardRow.name }}</td>                
-            <td><a href="{% url 'board_view' boardRow.id boards.number %}?searchStr={{searchStr}}">{{ boardRow.subject }}</a></td>
+            <td><a href="{% url 'board_view' boardRow.id %}?page={{page}}&searchStr={{searchStr}}">{{ boardRow.subject }}</a></td>
             <td>{{ boardRow.created_date }}</td>
             <td>{{ boardRow.hits }}</td>
             </tr>       
@@ -38,7 +38,7 @@
 <div class="text-center">
     <ul class="pagination">
         <li>
-            <a href="{% url 'board_home' 1 %}?searchStr={{searchStr}}" {% if not boards.page.has_previous %}disabled{% endif %}>&laquo;</a>
+            <a href="{% url 'board_home' %}?page={{page}}&searchStr={{searchStr}}" {% if not boards.page.has_previous %}disabled{% endif %}>&laquo;</a>
         </li>
 
         {% with active_page=boards.number %}
@@ -52,7 +52,7 @@
             {% elif boards.number > 5 and page_number == boards.number|sub:4 %}
                 {# show '...' #}
                 <!--<li class="disabled">
-                    <a href="{% url 'board_home' boards.number|sub:5 %}?searchStr={{searchStr}}">...</a>
+                    <a href="{% url 'board_home' %}?page={{page_number|sub:5}}&searchStr={{searchStr}}">...</a>
                 </li>-->
 
             {# if we're before the last five pages, just show "..." for pages more than three after the current page #}
@@ -62,13 +62,13 @@
             {% elif boards.number < boards.paginator.num_pages|sub:5 and page_number == boards.number|add:4 %}
                 {# show '...' #}
                 <!--<li class="disabled">
-                    <a href="{% url 'board_home' boards.number|add:5 %}?searchStr={{searchStr}}">...</a>
+                    <a href="{% url 'board_home'%}?page={{page_number|add:5}}&searchStr={{searchStr}}">...</a>
                 </li>-->
 
             {% else %}
                 {# show the page number as normal #}
                 <li {% if page_number == boards.number %}class="active"{% endif %} foo="3">
-                    <a href="{% url 'board_home' page_number %}?searchStr={{searchStr}}">{{ page_number }}</a>
+                    <a href="{% url 'board_home' %}?page={{page_number}}&searchStr={{searchStr}}">{{ page_number }}</a>
                 </li>
             {% endif %}
              
@@ -77,20 +77,20 @@
         {% endwith %}
 
         <li>
-            <a href="{% url 'board_home' boards.paginator.num_pages %}?searchStr={{searchStr}}" {% if not boards.page.has_previous %}disabled{% endif %}>&raquo;</a>
+            <a href="{% url 'board_home' %}?page={{boards.paginator.num_pages}}&searchStr={{searchStr}}" {% if not boards.page.has_previous %}disabled{% endif %}>&raquo;</a>
         </li>
 
     </ul>
 </div>
 
 {% if user.is_authenticated %}
-<button class="btn btn-default" onclick="location.href='{% url 'board_write' boards.number %}?searchStr={{searchStr}}'">글쓰기</button>
+<button class="btn btn-default" onclick="location.href='{% url 'board_write' %}?page={{page}}&searchStr={{searchStr}}'">글쓰기</button>
 {% endif %}
 
 <div>
 <form method='GET'>
     <div class="input-group">
-        <input class="form-control" placeholder="글찾기" type=text name=searchStr action="{% url 'board_home' boards.number %}" value={{searchStr}}>
+        <input class="form-control" placeholder="글찾기" type=text name=searchStr action="{% url 'board_home' %}" value={{searchStr}}>
         <span class="input-group-btn">
             <button class="btn btn-default" type="submit">글찾기</button>
         </span>

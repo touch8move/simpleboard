@@ -5,7 +5,7 @@ class BoardForm(forms.models.ModelForm):
     
     class Meta:
         model = Board 
-        fields = ('subject','name','contents',)
+        fields = ('id', 'subject','name','contents',)
         # attrs={novalidate:'novalidate'}
         widgets = {
             'subject': forms.fields.TextInput(attrs={
