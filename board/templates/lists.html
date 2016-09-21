@@ -11,25 +11,23 @@
 
 <table class=table>
     <tr>
-        <td>번호</td>
-        <td>이름</td>
-        <td>제목</td>
-        <td>등록일</td>
-        <td>조회수</td>
+        <td class="col-sm-1 center">번호</td>
+        <td class="">제목</td>
+        <td class="col-sm-3 center">등록일</td>
+        <td class="col-sm-1 center">조회수</td>
     </tr>
 
     {% if boards %}
-        <ul>
+        
             {% for boardRow in boards %}     
             <tr>
             <td>{{ boardRow.id }}</td>
-            <td>{{ boardRow.name }}</td>                
-            <td><a href="{% url 'board_view' boardRow.id %}?page={{page}}&searchStr={{searchStr}}">{{ boardRow.subject }}</a></td>
+            <td><a href="{% url 'board_view' boardRow.id %}?page={{page}}&searchStr={{searchStr}}">{{ boardRow.subject }}</a> [{{boardRow.get_replys_count}}]</td>
             <td>{{ boardRow.created_date }}</td>
             <td>{{ boardRow.hits }}</td>
             </tr>       
             {% endfor %}
-        </ul>
+        
     {% else %}
         <p>No Data.</p>
     {% endif %}

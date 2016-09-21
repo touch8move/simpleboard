@@ -15,6 +15,8 @@ class Board(models.Model):
     
     def get_replys(self):
         return Reply.objects.filter(board_id=self.id)
+    def get_replys_count(self):
+        return Reply.objects.filter(board_id=self.id).count()
 
 class Reply(models.Model):
     id = models.AutoField(primary_key=True)

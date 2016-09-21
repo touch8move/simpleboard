@@ -50,13 +50,11 @@ def board_write(request):
     page = request.GET.get('page')
     searchStr = request.GET.get('searchStr')
     
-    if request.POST:
-        print("POST", request.POST.get('id'))
-        form = BoardForm(request.POST)
-    else:
-        print("GET")
-        board = Board.objects.get(id=request.GET.get('board_id'))
-        form = BoardForm(instance=board)
+    # if request.POST:
+    #     print("POST", request.POST.get('id'))
+    form = BoardForm(request.POST or None)
+        # board = Board.objects.get(id=request.GET.get('board_id'))
+        # form = BoardForm(instance=board)
     
     if form.is_valid():
         board_ = form.save()

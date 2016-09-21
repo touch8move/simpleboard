@@ -7,7 +7,7 @@
         max_height:700,
     });
 </script>
-<form class="form-horizontal" method='POST' action="{% url 'board_write' board_id %}?page={{page}}&searchStr={{ searchStr }}" novalidate>
+<form class="form-horizontal" method='POST' action="{% url 'board_write' %}?page={{page}}&searchStr={{ searchStr }}" novalidate>
     
     {% csrf_token %}
     <div>
