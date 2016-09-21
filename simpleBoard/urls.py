@@ -37,5 +37,5 @@ urlpatterns = [
     url(r'^account/delete', account_delete, name='account_delete'),
 
     url(r'^reply/write/(?P<board_id>\d+)/', reply_write, name='reply_write'),
-    url(r'^reply/delete/(?P<board_id>\d+)/', reply_delete, name='reply_delete'),
+    url(r'^reply/delete/(?P<board_id>\d+)/(?P<reply_id>\d+)/', reply_delete, name='reply_delete'),
 ]

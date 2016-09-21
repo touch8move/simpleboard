@@ -45,7 +45,7 @@ class ReplyForm(forms.models.ModelForm):
             })
         }
 
-    def save(self, for_board, ipaddress, depth_id, password):
+    def save(self, for_board, ipaddress, depth_id):
         self.instance.board = for_board
         self.instance.ipaddress = ipaddress
         self.instance.depth_id = depth_id

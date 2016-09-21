@@ -1,8 +1,8 @@
 from django.shortcuts import render_to_response, render, redirect, reverse
 from django.utils import timezone
-from board.models import Board
+from board.models import Board, Reply
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from board.forms import BoardForm, ReplyForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth import hashers
@@ -16,13 +16,6 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
-
-def set_password(raw_password):
-    return hashers.make_password(raw_password)
-    
-def check_password(self, raw_password):
-    return hashers.check_password(raw_password)
-
 
 def board_home(request):
     # if searchStr == None:
@@ -80,7 +73,6 @@ def board_edit(request, board_id):
         board = Board.objects.get(id=board_id)
         form = BoardForm(request.POST, instance=board)
     else:
-        print("GET")
         board = Board.objects.get(id=board_id)
         form = BoardForm(instance=board)
     
@@ -121,11 +113,12 @@ def reply_write(request, board_id):
     
     ipaddress = get_client_ip(request)
     
-    password = set_password(request.POST.get('password'))
+    # password = request.POST.get('password')
+    # print (password)
     form = ReplyForm(request.POST)
     if form.is_valid():
         board = Board.objects.get(id=board_id)    
-        reply = form.save(for_board=board, ipaddress=ipaddress, depth_id=depth_id, password=password)
+        reply = form.save(for_board=board, ipaddress=ipaddress, depth_id=depth_id)
         print ("reply write!!!")
     return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr)
 
@@ -133,6 +126,14 @@ def reply_delete(request, board_id, reply_id):
     page = request.GET.get('page')
     searchStr = request.GET.get('searchStr')
     reply = Reply.objects.get(id=reply_id)
+    print(reply.password)
+    # if reply.password != request.POST.get("replyPassword"):
+    if not hashers.check_password(request.POST.get("replyPassword"), reply.password):
+        # print (reply.password, request.POST.get("password"))
+        formerror = '비밀번호가 다릅니다.'
+        return HttpResponse(formerror);
+        
     if reply is not None:
         reply.delete()
-    return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr)
+    
+    return HttpResponse("");
