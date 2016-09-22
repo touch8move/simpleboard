@@ -27,13 +27,13 @@ class BoardForm(forms.models.ModelForm):
 class ReplyForm(forms.models.ModelForm):
     class Meta:
         model = Reply
-        fields = ('name', 'reply', 'password')
+        fields = ('name', 'comment', 'password')
         widgets = {
             'name':forms.fields.TextInput(attrs={
                 'placeholder':'이름',
                 'class': 'form-control',
             }),
-            'reply':forms.Textarea(attrs={
+            'comment':forms.Textarea(attrs={
                 'placeholder':'댓글',
                 'class': 'form-control',
                 'rows':3,
@@ -45,8 +45,9 @@ class ReplyForm(forms.models.ModelForm):
             })
         }
 
-    def save(self, for_board, ipaddress, depth_id):
+    def save(self, for_board, ipaddress, parent, depth):
         self.instance.board = for_board
         self.instance.ipaddress = ipaddress
-        self.instance.depth_id = depth_id
+        self.instance.parent = parent
+        self.instance.depth = depth
         return super().save()

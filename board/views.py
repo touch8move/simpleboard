@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from board.forms import BoardForm, ReplyForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth import hashers
+
 #===========================================================================================
 rowsPerPage = 2    
 # HELP
@@ -97,26 +98,24 @@ def board_view(request, board_id):
     board_.save()
     reply_form = ReplyForm()
     replys = board_.get_replys()
+    
     return render(request, 'viewBoard.html', {'reply_form':reply_form, 'board':board_, 'page':page, 'searchStr':searchStr, 'replys':replys})
 
 
 def reply_write(request, board_id):
     page = request.GET.get('page')
     searchStr = request.GET.get('searchStr')
-    depth_id = request.GET.get('depthId')
-    
-    if depth_id is None:
-        print ("depth_id=========", depth_id)
-        depth_id = 0
-    
+    parent_id=request.GET.get('parent', None)
+    parent = None
+    if parent_id is not None:
+        parent = Reply.objects.get(id=parent_id)
+    depth = request.GET.get('depth', 0)
     ipaddress = get_client_ip(request)
     
-    # password = request.POST.get('password')
-    # print (password)
     form = ReplyForm(request.POST)
     if form.is_valid():
         board = Board.objects.get(id=board_id)    
-        reply = form.save(for_board=board, ipaddress=ipaddress, depth_id=depth_id)
+        reply = form.save(for_board=board, ipaddress=ipaddress, parent=parent, depth=depth)
         print ("reply write!!!")
     return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr)
 
@@ -124,10 +123,9 @@ def reply_delete(request, board_id, reply_id):
     page = request.GET.get('page')
     searchStr = request.GET.get('searchStr')
     reply = Reply.objects.get(id=reply_id)
-    print(reply.password)
-    # if reply.password != request.POST.get("replyPassword"):
+    # print(reply.password)
+    
     if not hashers.check_password(request.POST.get("replyPassword"), reply.password):
-        # print (reply.password, request.POST.get("password"))
         formerror = '비밀번호가 다릅니다.'
         return HttpResponse(formerror);
         

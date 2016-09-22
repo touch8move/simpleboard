@@ -1,58 +1,78 @@
+{% load arithmetic %}
+
 <script>
 $(document).ready(function() {
     $("#replyerrormsg").hide();
+
+    var replyInputCnt = 0;
+
+    $(document).on("click", ".glyphicon-trash", function () {
+        $("#modalinputpassword").val("");
+        $("#modalinputpassword").focus();
+        var replyid = $(this).data('id');
+        //  console.log(replyid);
+        var url = "{% url 'reply_delete' board.id 9999999999 %}?page={{page}}&searchStr={{searchStr}}"
+        url = url.replace('9999999999', replyid);
+        $("#modalpassword").on("submit", function(e){
+            //  console.log("I'm In");
+            var fd = $("#modalpassword").serialize();
+            e.preventDefault();
+            $.ajax({
+                method: "POST",
+                url: url,
+                data:fd,
+            }).done(function(msg){
+                // console.log(msg);
+                $("#myModal").modal("hide");
+                if(msg.length>0){
+                    $("#replyerrormsg").html("");
+                    $("#replyerrormsg").append(msg).show("fast", function(){
+                        setTimeout(function(){
+                            $("#replyerrormsg").hide("fast");
+                        },3000);
+                    });
+                }else{
+                    location.reload();
+                }
+                
+            }).fail(function(msg){
+                
+            });
+        })
+    }).on("click", ".glyphicon-comment", function(){
+        if(replyInputCnt==0){
+            var parent = $(this).data('id');
+            var depth = $(this).data('depth');
+            depth++;
+            var urlstring = "{% url 'reply_write' board_id=board.id %}?parent="+parent+"&depth="+depth+"&page={{page}}&searchStr={{searchStr}}";
+            var tmplMarkup = $('#replyinputtmp').html();
+            console.log(tmplMarkup)
+            var compiledTmpl = _.template(tmplMarkup);
+
+            $(this).parent().after(compiledTmpl({actionurl:urlstring}));
+            replyInputCnt++;
+        }
+    });
 });
-$(document).on("click", ".glyphicon-trash", function () {
-    $("#modalinputpassword").val("");
-    $("#modalinputpassword").focus();
-     var replyid = $(this).data('id');
-    //  console.log(replyid);
-     var url = "{% url 'reply_delete' board.id 9999999999 %}?page={{page}}&searchStr={{searchStr}}"
-     url = url.replace('9999999999', replyid);
-     $("#modalpassword").on("submit", function(e){
-        //  console.log("I'm In");
-         var fd = $("#modalpassword").serialize();
-         e.preventDefault();
-         $.ajax({
-             method: "POST",
-             url: url,
-             data:fd,
-         }).done(function(msg){
-            // console.log(msg);
-            $("#myModal").modal("hide");
-            if(msg.length>0){
-                $("#replyerrormsg").html("");
-                $("#replyerrormsg").append(msg).show("fast", function(){
-                    setTimeout(function(){
-                        $("#replyerrormsg").hide("fast");
-                    },3000);
-                });
-            }else{
-                location.reload();
-            }
-            
-         }).fail(function(msg){
-            
-         });
-     })
-});
+
 
 </script>
 <div id="replyerrormsg" class="alert alert-danger" role="alert"></div>
-<div>
+<div class="container">
 {% for reply in replys %}
     <div class="row">
-        <div class="col-sm-3">
-            <b>{{ reply.name }}</b> ({{ reply.ipaddress }})
+        <div class="col-sm-{{reply.depth}}">
         </div>
-        <div class="col-sm-7">
-           {% autoescape off %} {{ reply.reply|linebreaks }} {% endautoescape %}
+        <div class="col-sm-{{12|sub:reply.depth}}">
+            <b>{{ reply.name }}</b> ({{ reply.ipaddress }}) {{reply.created_date|date:"Y-m-d H:i:s"}} &nbsp;&nbsp;
+            <span class="text-right">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true" data-comment="{{ reply.comment }}" data-id="{{ reply.id }}"></span>
+                <span class="glyphicon glyphicon-trash" aria-hidden="true" data-toggle="modal" data-target="#myModal" data-id="{{ reply.id }}"></span>
+                <span class="glyphicon glyphicon-comment" aria-hidden="true" data-depth="{{ reply.depth }}" data-id="{{ reply.id }}"></span>
+            </span>
+            {% autoescape off %} {{ reply.comment|linebreaks }} {% endautoescape %}
         </div>
-        <div class="col-sm-2">
-            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-            <span class="glyphicon glyphicon-trash" aria-hidden="true" data-toggle="modal" data-target="#myModal" data-id="{{ reply.id }}"></span>
-            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
-        </div>
+        
     </div>
     <hr>
 {% endfor %}
@@ -78,3 +98,24 @@ $(document).on("click", ".glyphicon-trash", function () {
       </form>
     </div>
   </div>
+
+  <script type="text/template" id="replyinputtmp">
+    <div id = addreply>
+    <form class="form-inline" method='POST' action= <%= actionurl %> novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <div>
+                {{ reply_form.comment }}
+            </div>
+        </div>
+        <hr>
+        <div class="form-group">
+            {{ reply_form.name }}
+        </div>
+        <div class="form-group">
+            {{ reply_form.password }}
+        </div>
+        <button class="btn btn-default" type="submit">입력</button>
+    </form>
+    </div>
+</script>

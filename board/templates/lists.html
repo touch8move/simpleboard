@@ -23,7 +23,7 @@
             <tr>
             <td>{{ boardRow.id }}</td>
             <td><a href="{% url 'board_view' boardRow.id %}?page={{page}}&searchStr={{searchStr}}">{{ boardRow.subject }}</a> [{{boardRow.get_replys_count}}]</td>
-            <td>{{ boardRow.created_date }}</td>
+            <td>{{ boardRow.created_date|date:"Y-m-d H:i:s" }}</td>
             <td>{{ boardRow.hits }}</td>
             </tr>       
             {% endfor %}

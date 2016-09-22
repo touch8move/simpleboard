@@ -23,7 +23,7 @@
     <button class="btn btn-default" onclick="location.href='{% url 'board_home' %}?page={{page}}&searchStr={{searchStr}}'">글목록</a></button>
 </div>
 <hr>
-{% if replys.count > 0 %}
+{% if replys is not None %}
 {% include 'replylist.html' %}
 {% endif %}
 {% include 'replyInput.html' %}
