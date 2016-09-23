@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
 {% block contents %}
+
+<button class="btn btn-default" onclick="location.href='{% url 'account_add' %}'">Create</button>
 {% if user.is_authenticated %}
-<div>
+
     USER: {{ user.username }} 
     <button class="btn btn-default" onclick="location.href='{% url 'logout' %}'">Logout</button>
-</div>
+
 {% else %}
     <button class="btn btn-default" onclick="location.href='{% url 'login' %}'">Login</button>
 {% endif %}
+{% if user.is_authenticated %}
+<button class="btn btn-default" onclick="location.href='{% url 'board_write' %}?page={{page}}&searchStr={{searchStr}}'">글쓰기</button>
+{% endif %}
+
 
 <table class=table>
     <tr>
@@ -80,11 +86,6 @@
 
     </ul>
 </div>
-
-{% if user.is_authenticated %}
-<button class="btn btn-default" onclick="location.href='{% url 'board_write' %}?page={{page}}&searchStr={{searchStr}}'">글쓰기</button>
-{% endif %}
-
 <div>
 <form method='GET'>
     <div class="input-group">
