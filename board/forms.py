@@ -37,7 +37,7 @@ class ReplyForm(forms.models.ModelForm):
                 'placeholder':'댓글',
                 'class': 'form-control',
                 'rows':3,
-                'cols':100,
+                'cols':90,
             }),
             'password':forms.PasswordInput(attrs={
                 'placeholder': '비밀번호',
