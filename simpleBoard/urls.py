@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.views.generic import RedirectView
 
-from board.views import board_home, board_write, board_view, board_delete, board_edit, reply_write, reply_delete 
+from board.views import board_home, board_write, board_view, board_delete, board_edit, reply_write, reply_update, reply_delete 
 from account.views import account_login, account_logout, account_add, account_update, account_delete
 
 urlpatterns = [
@@ -29,7 +29,6 @@ urlpatterns = [
     url(r'^view/(?P<board_id>\d+)/', board_view, name='board_view'),
     url(r'^delete/(?P<board_id>\d+)/', board_delete, name='board_delete'),
 
-    # url(r'^account/', account_main, name='account_main'),
     url(r'^account/login', account_login, name='login'),
     url(r'^account/logout', account_logout, name='logout'),
     url(r'^account/create', account_add, name='account_add'),
@@ -37,5 +36,6 @@ urlpatterns = [
     url(r'^account/delete', account_delete, name='account_delete'),
 
     url(r'^reply/write/(?P<board_id>\d+)/', reply_write, name='reply_write'),
+    url(r'^reply/update/(?P<board_id>\d+)/(?P<reply_id>\d+)/', reply_update, name='reply_update'),
     url(r'^reply/delete/(?P<board_id>\d+)/(?P<reply_id>\d+)/', reply_delete, name='reply_delete'),
 ]
