@@ -52,13 +52,32 @@ $(document).ready(function() {
             $(this).parent().after(compiledTmpl({actionurl:urlstring}));
             replyInputCnt++;
         }
+    }).on("click", ".glyphicon-pencil", function(){
+        if(replyInputCnt==0){
+            var id = $(this).data('id');
+            var depth = $(this).data('depth');
+            var comment = $(this).data('comment');
+            depth++;
+            var urlstring = "{% url 'reply_update' board_id=board.id reply_id=999999999999 %}?page={{page}}&searchStr={{searchStr}}";
+            urlstring = urlstring.replace("999999999999", id);
+            var tmplMarkup = $('#replyedittmp').html();
+            console.log(tmplMarkup)
+            var compiledTmpl = _.template(tmplMarkup);
+            // $("#comment"+id).addClass("hidden");
+            console.log(comment);
+            $("div #editreply").find("textarea").val(comment);
+            $(this).parent().after(compiledTmpl({actionurl:urlstring}));
+            replyInputCnt++;
+        }else{
+            
+        }
     });
 });
 
 
 </script>
 <div id="replyerrormsg" class="alert alert-danger" role="alert"></div>
-<div class="container">
+<!--<div class="container">-->
 {% for reply in replys %}
     <div class="row">
         <div class="col-sm-{{reply.depth}}">
@@ -70,36 +89,34 @@ $(document).ready(function() {
                 <span class="glyphicon glyphicon-trash" aria-hidden="true" data-toggle="modal" data-target="#myModal" data-id="{{ reply.id }}"></span>
                 <span class="glyphicon glyphicon-comment" aria-hidden="true" data-depth="{{ reply.depth }}" data-id="{{ reply.id }}"></span>
             </span>
-            {% autoescape off %} {{ reply.comment|linebreaks }} {% endautoescape %}
-        </div>
-        
+            <span id="comment{{reply.id}}">{% autoescape off %} {{ reply.comment|linebreaks }} {% endautoescape %}</span>
+        </div>   
     </div>
     <hr>
 {% endfor %}
-</div>
+<!--</div>-->
 <div class="modal" id="myModal" role="dialog">
     <div class="modal-dialog">
-      
-      <form id="modalpassword" method="POST" action="">
-          {% csrf_token %}
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">삭제하려면 비밀번호를 입력하세요.</h4>
+        <form id="modalpassword" method="POST" action="">
+            {% csrf_token %}
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">삭제하려면 비밀번호를 입력하세요.</h4>
+            </div>
+            <div class="modal-body">
+            <input id="modalinputpassword" type="password" name="replyPassword">
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-default">확인</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+            </div>
         </div>
-        <div class="modal-body">
-          <input id="modalinputpassword" type="password" name="replyPassword">
-        </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-default">확인</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-        </div>
-      </div>
-      </form>
+        </form>
     </div>
-  </div>
+</div>
 
-  <script type="text/template" id="replyinputtmp">
+<script type="text/template" id="replyinputtmp">
     <div id = addreply>
     <form class="form-inline" method='POST' action= <%= actionurl %> novalidate>
         {% csrf_token %}
@@ -116,6 +133,26 @@ $(document).ready(function() {
             {{ reply_form.password }}
         </div>
         <button class="btn btn-default" type="submit">입력</button>
+        <button class="btn btn-default" type="button">닫기</button>
+    </form>
+    </div>
+</script>
+
+<script type="text/template" id="replyedittmp">
+    <div id="editreply">
+    <form class="form-inline" method='POST' action= <%= actionurl %> novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <div>
+                {{ reply_form.comment }}
+            </div>
+        </div>
+        <hr>
+        <div class="form-group">
+            {{ reply_form.password }}
+        </div>
+        <button class="btn btn-default" type="submit">입력</button>
+        <button class="btn btn-default" type="button">닫기</button>
     </form>
     </div>
 </script>
