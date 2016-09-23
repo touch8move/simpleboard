@@ -2,26 +2,29 @@
 {% block title %}글보기{% endblock %}
 {% block contents %}
 <div>
-    <div class="panel-heading">
-         <h3 class="panel-title">
-            {{board.id}} : {{board.subject}}
-         </h3>
+    <hr>
+    <div class="row">
+        <div class="col-sm-9"><b>{{board.subject}}</b></div>
+        <div class="col-sm-3 text-right">{{ board.created_date|date:"Y-m-d H:i:s" }}</p></div>
+    </div>
+    <hr>
+    <div class="panel panel-default">
         <div class="panel-body">
             {% autoescape off %}
             {{ board.contents }}
-            {% endautoescape %} 
+            {% endautoescape %}    
         </div>
     </div>
 </div>
 {% if user.is_authenticated %}
-<div>
+
     <button class="btn btn-default" onclick="location.href='{% url 'board_edit' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}&board_id={{board.id}}'">수정</button>    
     <button class="btn btn-default" onclick="location.href='{% url 'board_delete' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}'">삭제</button>
-</div>
+
 {% endif %}
-<div>
+
     <button class="btn btn-default" onclick="location.href='{% url 'board_home' %}?page={{page}}&searchStr={{searchStr}}'">글목록</a></button>
-</div>
+
 <hr>
 {% if replys is not None %}
 {% include 'replylist.html' %}
