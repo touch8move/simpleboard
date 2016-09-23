@@ -6,7 +6,7 @@ from itertools import chain
 class Board(models.Model):
     id = models.AutoField(primary_key=True)
     subject = models.CharField(max_length=50, blank=False)
-    name = models.CharField(max_length=50, blank=False)
+    name = models.CharField(max_length=50, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     contents = models.TextField(blank=False)
     hits = models.IntegerField(default=0, blank=False)
