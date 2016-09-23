@@ -12,7 +12,7 @@ class Board(models.Model):
     hits = models.IntegerField(default=0, blank=False)
 
     def get_absolute_url(self):
-        return reverse('board_view', args=(self.id,1))
+        return reverse('board_view', kwargs={"board_id":self.id})
 
     def get_replys(self):
         # reply_withchild = Reply.objects.none()
