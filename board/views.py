@@ -8,7 +8,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth import hashers
 
 #===========================================================================================
-rowsPerPage = 2    
+# 페이지줄수
+rowsPerPage = 20
 # HELP
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -98,8 +99,26 @@ def board_view(request, board_id):
     board_.save()
     reply_form = ReplyForm()
     replys = board_.get_replys()
+    boardList = None;
+    if searchStr:
+        print ("searchStr", searchStr)
+        boardList = Board.objects.filter(subject__contains = searchStr).order_by('-id')
+    else:
+        searchStr = ''
+        boardList = Board.objects.order_by('-id')
+
+    paginator = Paginator(boardList, rowsPerPage)
     
-    return render(request, 'viewBoard.html', {'reply_form':reply_form, 'board':board_, 'page':page, 'searchStr':searchStr, 'replys':replys})
+    try:
+        boards = paginator.page(page)
+    except PageNotAnInteger:
+        boards = paginator.page(1)
+    except EmptyPage:
+        boards = paginator.page(paginator.num_pages)
+    # return render(request, 'lists.html', {'user':request.user,'boards': boards, 'searchStr':searchStr})
+
+
+    return render(request, 'viewBoard.html', {'reply_form':reply_form, 'boards': boards,  'board':board_, 'page':page, 'searchStr':searchStr, 'replys':replys})
 
 
 def reply_write(request, board_id):

@@ -1,0 +1,53 @@
+<table class=table>
+    <tr class="small text-center">
+        <td class="col-sm-1 center">번호</td>
+        <td class="col-sm-8">제목</td>
+        <td class="col-sm-3 center">등록일</td>
+    </tr>
+    {% if boards %}
+        {% for boardRow in boards %}     
+        <tr class="small text-center">
+            <td>{{ boardRow.id }}</td>
+            <td class="text-left"><a href="{% url 'board_view' boardRow.id %}?page={{page}}&searchStr={{searchStr}}">{{ boardRow.subject }}</a> [{{boardRow.get_replys_count}}]</td>
+            <td>{{ boardRow.created_date|date:"Y-m-d H:i:s" }}</td>
+        </tr>       
+        {% endfor %}
+    {% else %}
+        <p>No Data.</p>
+    {% endif %}
+</table>
+<!--pagination start-->
+{% load arithmetic %}
+<div class="text-center">
+    <ul class="pagination">
+        <li>
+            <a href="{% url 'board_home' %}?page={{page}}&searchStr={{searchStr}}" {% if not boards.page.has_previous %}disabled{% endif %}>&laquo;</a>
+        </li>
+        {% with active_page=boards.number %}
+        {% for page_number in boards.paginator.page_range %}
+            {% if boards.number > 5 and page_number < boards.number|sub:4 %}
+            {% elif boards.number > 5 and page_number == boards.number|sub:4 %}
+            {% elif boards.number < boards.paginator.num_pages|sub:5 and page_number > boards.number|add:4 %}
+            {% elif boards.number < boards.paginator.num_pages|sub:5 and page_number == boards.number|add:4 %}
+            {% else %}
+                <li {% if page_number == boards.number %}class="active"{% endif %} foo="3">
+                    <a href="{% url 'board_home' %}?page={{page_number}}&searchStr={{searchStr}}">{{ page_number }}</a>
+                </li>
+            {% endif %}             
+        {% endfor %}
+        {% endwith %}
+        <li>
+            <a href="{% url 'board_home' %}?page={{boards.paginator.num_pages}}&searchStr={{searchStr}}" {% if not boards.page.has_previous %}disabled{% endif %}>&raquo;</a>
+        </li>
+    </ul>
+</div>
+<!--pagination end-->
+
+<form method='GET'>
+<div class="input-group">
+    <input class="form-control" placeholder="글찾기" type=text name=searchStr action="{% url 'board_home' %}" value={{searchStr}}>
+    <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">글찾기</button>
+    </span>    
+</div>
+</form>

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}글보기{% endblock %}
 {% block contents %}
+
 <div>
     <hr>
     <div class="row">
@@ -8,6 +9,11 @@
         <div class="col-sm-3 text-right">{{ board.created_date|date:"Y-m-d H:i:s" }}</p></div>
     </div>
     <hr>
+    <div class="contents-banner">
+        <!--banner-->
+    </div>
+
+
     <div class="panel panel-default">
         <div class="panel-body">
             {% autoescape off %}
@@ -16,6 +22,11 @@
         </div>
     </div>
 </div>
+<hr>
+<div class="contents-banner">
+    <!--banner-->
+</div>
+
 {% if user.is_authenticated %}
 
     <button class="btn btn-default" onclick="location.href='{% url 'board_edit' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}&board_id={{board.id}}'">수정</button>    
@@ -23,12 +34,23 @@
 
 {% endif %}
 
-    <button class="btn btn-default" onclick="location.href='{% url 'board_home' %}?page={{page}}&searchStr={{searchStr}}'">글목록</a></button>
+    <div class="text-right"><button class="btn btn-default" onclick="location.href='{% url 'board_home' %}?page={{page}}&searchStr={{searchStr}}'">글목록</a></button></div>
 
 <hr>
+<div class="replylist">
 {% if replys is not None %}
 {% include 'replylist.html' %}
 {% endif %}
+</div>
+<div class="replyinput">
 {% include 'replyInput.html' %}
+</div>
+<div class="contents-banner">
+    <!--banner-->
+</div>
+{% include 'list_template.html' %}
+<div class="contents-banner">
+    <!--banner-->
+</div>
 {% endblock %}
 

@@ -1,0 +1,44 @@
+.left-bar{
+    position:absolute;
+    left:0px;
+    width:200px;
+    min-height:600px;
+    background-color:rgb(200,90,255);
+}
+.right-bar{
+    position:fixed;
+    top:0px;
+    left:1200px;
+    width:200px;
+    height:600px;
+    background-color:rgb(100,200,255);
+}
+.header-bar {
+    position:absolute;
+    width:1000px;
+    left:200px;
+    height:30px;
+    background-color:rgb(90,90,255);
+}
+
+.contents {
+    z-index: 1000;
+    margin-bottom: 30px;
+    position:absolute;
+    top:30px;
+    max-width:1000px;
+    left:200px;
+    background-color:rgb(255,255,255);
+}
+
+.contents-banner{
+    width:1000px;
+    height:70px;
+    background-color:rgb(150,220,35);
+}
+
+.bottom-bar{
+    width:1000px;
+    height:90px;
+    background-color:rgb(100,90,200);
+}
