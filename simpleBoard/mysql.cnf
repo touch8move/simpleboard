@@ -1,0 +1,6 @@
+[client]
+database = simpleboard
+host = localhost
+user = simpleboard
+password = simpleboard
+default-character-set = utf8
