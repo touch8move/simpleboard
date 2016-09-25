@@ -1,0 +1,13 @@
+server {
+    linten 80;
+    server_name {{ host }};
+
+    location /static {
+        alias /home/{{ user }}/site/{{ host }}/static;
+    }
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_pass http://unix:/tmp/{{ host }}.socket;
+    }
+}
