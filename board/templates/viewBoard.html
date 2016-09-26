@@ -2,10 +2,9 @@
 {% block title %}글보기{% endblock %}
 {% block contents %}
 {% if user.is_authenticated %}
-
+    <button class="btn btn-default btn-sm" onclick="location.href='{% url 'board_write' %}'">글쓰기</button>
     <button class="btn btn-default btn-sm" onclick="location.href='{% url 'board_edit' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}&board_id={{board.id}}'">수정</button>    
     <button class="btn btn-default btn-sm" onclick="location.href='{% url 'board_delete' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}'">삭제</button>
-
 {% endif %}
 
 
