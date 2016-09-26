@@ -9,7 +9,7 @@ from django.contrib.auth import hashers
 
 #===========================================================================================
 # 페이지줄수
-rowsPerPage = 20
+rowsPerPage = 25
 # HELP
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -21,6 +21,7 @@ def get_client_ip(request):
 
 def board_home(request):
     # if searchStr == None:
+    error = request.GET.get('error','')
     searchStr = request.GET.get('searchStr')
     page = request.GET.get('page')
        
@@ -46,7 +47,7 @@ def board_home(request):
 
 #===========================================================================================
 def board_write(request):
-    
+    error = request.GET.get('error','')
     if not request.user.is_authenticated():
         return redirect('board_home')
     page = request.GET.get('page')
@@ -64,6 +65,7 @@ def board_write(request):
     return render(request, 'writeBoard.html', {"form": form, 'page':page, 'searchStr':searchStr})
 
 def board_edit(request, board_id):
+    
     if not request.user.is_authenticated():
         return redirect('board_home')
     page = request.GET.get('page')
@@ -82,6 +84,7 @@ def board_edit(request, board_id):
     return render(request, 'editBoard.html', {"form": form, "board_id": board_id, 'page':page, 'searchStr':searchStr})
 
 def board_delete(request, board_id):
+    error = request.GET.get('error','')
     if not request.user.is_authenticated():
         return redirect('board_home')
     page = request.GET.get('page')
@@ -93,8 +96,9 @@ def board_delete(request, board_id):
 
 def board_view(request, board_id):
     page = request.GET.get('page')
-    searchStr = request.GET.get('searchStr')
+    searchStr = request.GET.get('searchStr','')
     board_ = Board.objects.get(id=board_id)
+    error = request.GET.get('error','')
     board_.hits+=1
     board_.save()
     reply_form = ReplyForm()
@@ -118,7 +122,7 @@ def board_view(request, board_id):
     # return render(request, 'lists.html', {'user':request.user,'boards': boards, 'searchStr':searchStr})
 
 
-    return render(request, 'viewBoard.html', {'reply_form':reply_form, 'boards': boards,  'board':board_, 'page':page, 'searchStr':searchStr, 'replys':replys})
+    return render(request, 'viewBoard.html', {'reply_form':reply_form, 'boards': boards,  'board':board_, 'page':page, 'searchStr':searchStr, 'replys':replys, 'error':error})
 
 
 def reply_write(request, board_id):
@@ -147,28 +151,31 @@ def reply_update(request, board_id, reply_id):
     ipaddress = get_client_ip(request)
     reply = Reply.objects.get(id=reply_id)
     # print (hashers.make_password(password), reply.password)
+    
     if not hashers.check_password(password, reply.password):
-        formerror = '비밀번호가 다릅니다.'
-        return HttpResponse(formerror);
-
-    reply.comment = comment
-    reply.save()    
+        error = '비밀번호가 다릅니다.'
+        # return HttpResponse(formerror);
+    else:
+        reply.comment = comment
+        reply.save()    
     
     print ("reply update!!!")
-
-    return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr)
+    # return board_view(request, board_id)
+    return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr+'&error='+error)
 
 def reply_delete(request, board_id, reply_id):
+    error = ""
     page = request.GET.get('page')
     searchStr = request.GET.get('searchStr')
     reply = Reply.objects.get(id=reply_id)
     # print(reply.password)
-    
-    if not hashers.check_password(request.POST.get("replyPassword"), reply.password):
-        formerror = '비밀번호가 다릅니다.'
-        return HttpResponse(formerror);
-        
     if reply is not None:
-        reply.delete()
-    
-    return HttpResponse("");
+        if not hashers.check_password(request.POST.get("replyPassword"), reply.password):
+            error = '비밀번호가 다릅니다.'
+            # return HttpResponse(formerror);
+        else:
+            reply.delete()
+    else:
+        error = "해당항목이 없습니다." 
+
+    return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr+'&error='+error)
