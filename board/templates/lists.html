@@ -3,7 +3,8 @@
 
 {% if user.is_authenticated %}
     USER: {{ user.username }} 
-    <button class="btn btn-default" onclick="location.href='{% url 'logout' %}'">Logout</button>
+    <button class="btn btn-default btn-sm" onclick="location.href='{% url 'logout' %}'">Logout</button>
+    <button class="btn btn-default btn-sm" onclick="location.href='{% url 'board_write' %}'">글쓰기</button>
 {% endif %}
 <div class="contents-banner">
     <!--banner-->
