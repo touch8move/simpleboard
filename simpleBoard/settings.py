@@ -82,24 +82,24 @@ WSGI_APPLICATION = 'simpleBoard.wsgi.application'
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'OPTIONS': {
-#             'read_default_file': os.path.abspath(os.path.join(BASE_DIR, '/simpleBoard/mysql.cnf')),
-#         },
-#     }
-# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'simpleboard',
-        'USER': 'simpleboard',
-        'PASSWORD': 'simpleboard',
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {
+            'read_default_file': os.path.abspath(os.path.join(BASE_DIR, './simpleBoard/mysql.cnf')),
+        },
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql', 
+#         'NAME': 'simpleboard',
+#         'USER': 'simpleboard',
+#         'PASSWORD': 'simpleboard',
+#         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+#         'PORT': '3306',
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
