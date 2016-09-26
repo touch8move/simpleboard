@@ -1,18 +1,18 @@
-<div>
+<div class="container">
 <form class="form-inline" method='POST' action="{% url 'reply_write' board_id=board.id %}?page={{page}}&searchStr={{searchStr}}" novalidate>
     {% csrf_token %}
-    <div class="form-group">
-        <div>
-            {{ reply_form.comment }}
+    <div class="form-group row">
+        {{ reply_form.comment }}
+    </div>
+    <div class="row">
+        <div class="form-group">
+            {{ reply_form.name }}
         </div>
+        <div class="form-group">
+            {{ reply_form.password }}
+        </div>
+        <button class="btn btn-default btn-sm" type="submit">입력</button>
     </div>
-    <hr>
-    <div class="form-group">
-        {{ reply_form.name }}
-    </div>
-    <div class="form-group">
-        {{ reply_form.password }}
-    </div>
-    <button class="btn btn-default" type="submit">입력</button>
 </form>
 </div>
+<hr>
