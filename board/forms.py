@@ -10,11 +10,11 @@ class BoardForm(forms.models.ModelForm):
         widgets = {
             'subject': forms.fields.TextInput(attrs={
                 'placeholder': '제목',
-                'class': 'form-control',
+                'class': 'form-control input-sm',
             }),
             'name': forms.fields.TextInput(attrs={
                 'placeholder': '이름',
-                'class': 'form-control',
+                'class': 'form-control input-sm',
             }),
             'contents': forms.Textarea(attrs={
                 'rows': 20,
@@ -31,7 +31,7 @@ class ReplyForm(forms.models.ModelForm):
         widgets = {
             'name':forms.fields.TextInput(attrs={
                 'placeholder':'이름',
-                'class': 'form-control',
+                'class': 'form-control input-sm',
             }),
             'comment':forms.Textarea(attrs={
                 'placeholder':'댓글',
@@ -41,7 +41,7 @@ class ReplyForm(forms.models.ModelForm):
             }),
             'password':forms.PasswordInput(attrs={
                 'placeholder': '비밀번호',
-                'class': 'form-control',
+                'class': 'form-control input-sm',
             })
         }
 
