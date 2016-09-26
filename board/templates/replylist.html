@@ -2,43 +2,15 @@
 
 <script>
 $(document).ready(function() {
-    $("#replyerrormsg").hide();
-
     var replyInputCnt = 0;
-
     $(document).on("click", ".glyphicon-trash", function () {
         $("#modalinputpassword").val("");
         $("#modalinputpassword").focus();
         var replyid = $(this).data('id');
         //  console.log(replyid);
-        var url = "{% url 'reply_delete' board.id 9999999999 %}?page={{page}}&searchStr={{searchStr}}"
-        url = url.replace('9999999999', replyid);
-        $("#modalpassword").on("submit", function(e){
-            //  console.log("I'm In");
-            var fd = $("#modalpassword").serialize();
-            e.preventDefault();
-            $.ajax({
-                method: "POST",
-                url: url,
-                data:fd,
-            }).done(function(msg){
-                // console.log(msg);
-                $("#myModal").modal("hide");
-                if(msg.length>0){
-                    $("#replyerrormsg").html("");
-                    $("#replyerrormsg").append(msg).show("fast", function(){
-                        setTimeout(function(){
-                            $("#replyerrormsg").hide("fast");
-                        },3000);
-                    });
-                }else{
-                    location.reload();
-                }
-                
-            }).fail(function(msg){
-                
-            });
-        })
+        var urlstring = "/reply/delete/{{ board.id }}/"+replyid+"/?&page={{page}}&searchStr={{searchStr}}";
+        $("#modalpassword").attr({action:urlstring});
+        
     }).on("click", ".glyphicon-comment", function(){
         if(replyInputCnt==0){
             var parent = $(this).data('id');
@@ -46,7 +18,7 @@ $(document).ready(function() {
             depth++;
             var urlstring = "{% url 'reply_write' board_id=board.id %}?parent="+parent+"&depth="+depth+"&page={{page}}&searchStr={{searchStr}}";
             var tmplMarkup = $('#replyinputtmp').html();
-            console.log(tmplMarkup)
+            // console.log(tmplMarkup)
             var compiledTmpl = _.template(tmplMarkup);
 
             $(this).parent().after(compiledTmpl({actionurl:urlstring}));
@@ -57,44 +29,53 @@ $(document).ready(function() {
             var id = $(this).data('id');
             var depth = $(this).data('depth');
             var comment = $(this).data('comment');
+            // console.log(comment);
             depth++;
-            var urlstring = "{% url 'reply_update' board_id=board.id reply_id=999999999999 %}?page={{page}}&searchStr={{searchStr}}";
-            urlstring = urlstring.replace("999999999999", id);
+            var urlstring="/reply/update/{{ board.id }}/"+id+"/?&page={{page}}&searchStr={{searchStr}}";
             var tmplMarkup = $('#replyedittmp').html();
-            console.log(tmplMarkup)
+            
             var compiledTmpl = _.template(tmplMarkup);
-            // $("#comment"+id).addClass("hidden");
-            console.log(comment);
-            $("div #editreply").find("textarea").val(comment);
-            $(this).parent().after(compiledTmpl({actionurl:urlstring}));
+
+            $(this).parent().next().append(compiledTmpl({comment:comment, actionurl:urlstring}));
+            $("#comment"+id).hide();
             replyInputCnt++;
         }else{
             
         }
+    }).on("click", "#close_edit_reply", function(){
+        // console.log($(this).html());
+        $("span:hidden").show();
+        $("div").remove("#editreply");
+        replyInputCnt--;
+    }).on("click", "#close_add_reply", function(){
+        $("div").remove("#addreply");
+        replyInputCnt--;
     });
 });
 
 
 </script>
-<div id="replyerrormsg" class="alert alert-danger" role="alert"></div>
-<!--<div class="container">-->
+
 {% for reply in replys %}
-    <div class="row">
-        <div class="col-sm-{{reply.depth}}">
-        </div>
-        <div class="col-sm-{{12|sub:reply.depth}}">
-            <b>{{ reply.name }}</b> ({{ reply.ipaddress }}) {{reply.created_date|date:"Y-m-d H:i:s"}} &nbsp;&nbsp;
-            <span class="text-right">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true" data-comment="{{ reply.comment }}" data-id="{{ reply.id }}"></span>
-                <span class="glyphicon glyphicon-trash" aria-hidden="true" data-toggle="modal" data-target="#myModal" data-id="{{ reply.id }}"></span>
-                <span class="glyphicon glyphicon-comment" aria-hidden="true" data-depth="{{ reply.depth }}" data-id="{{ reply.id }}"></span>
+    <ul class="">
+        <div class="comment" style="padding-left:{{16|mul:reply.depth}}px;">
+            {% if reply.depth > 0 %}
+                <i class="fa fa-share fa-flip-vertical repicon"></i>            
+            {% endif %}
+            <b>{{ reply.name }}</b> &nbsp;&nbsp;{{reply.created_date|date:"Y-m-d H:i:s"}} &nbsp;&nbsp; ({{ reply.ipaddress|ip }}) &nbsp;&nbsp;
+            <span class="text-right comment-tool">
+                <button class="btn btn-default btn-sm glyphicon glyphicon-pencil" aria-hidden="true" data-comment="{{ reply.comment }}" data-id="{{ reply.id }}"></button>
+                <button class="btn btn-default btn-sm glyphicon glyphicon-trash" aria-hidden="true" data-toggle="modal" data-target="#myModal" data-id="{{ reply.id }}"></button>
+                <button class="btn btn-default btn-sm glyphicon glyphicon-comment" aria-hidden="true" data-depth="{{ reply.depth }}" data-id="{{ reply.id }}"></button>
             </span>
-            <span id="comment{{reply.id}}">{% autoescape off %} {{ reply.comment|linebreaks }} {% endautoescape %}</span>
-        </div>   
-    </div>
+            <div class="comment-text">
+                <span id="comment{{reply.id}}">{% autoescape off %} {{ reply.comment|linebreaks }} {% endautoescape %}</span>
+            </div>
+        </div>
+    </ul>
     <hr>
 {% endfor %}
-<!--</div>-->
+
 <div class="modal" id="myModal" role="dialog">
     <div class="modal-dialog">
         <form id="modalpassword" method="POST" action="">
@@ -108,8 +89,8 @@ $(document).ready(function() {
             <input id="modalinputpassword" type="password" name="replyPassword">
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-default">확인</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                <button type="submit" class="btn btn-default btn-sm">확인</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">취소</button>
             </div>
         </div>
         </form>
@@ -117,42 +98,40 @@ $(document).ready(function() {
 </div>
 
 <script type="text/template" id="replyinputtmp">
-    <div id = addreply>
+    <div class="container" id = addreply>
     <form class="form-inline" method='POST' action= <%= actionurl %> novalidate>
         {% csrf_token %}
-        <div class="form-group">
-            <div>
-                {{ reply_form.comment }}
+        <div class="form-group row">
+            {{ reply_form.comment }}
+        </div>
+        <div class="row">
+            <div class="form-group">
+                {{ reply_form.name }}
             </div>
+            <div class="form-group">
+                {{ reply_form.password }}
+            </div>
+            <button class="btn btn-default btn-sm" type="submit">입력</button>
+            <button id="close_add_reply" class="btn btn-default btn-sm" type="button">닫기</button>
         </div>
-        <hr>
-        <div class="form-group">
-            {{ reply_form.name }}
-        </div>
-        <div class="form-group">
-            {{ reply_form.password }}
-        </div>
-        <button class="btn btn-default" type="submit">입력</button>
-        <button class="btn btn-default" type="button">닫기</button>
     </form>
     </div>
 </script>
 
 <script type="text/template" id="replyedittmp">
-    <div id="editreply">
-    <form class="form-inline" method='POST' action= <%= actionurl %> novalidate>
+    <div class="container" id="editreply">
+    <form id="replyedit" class="form-inline" method='POST' action= <%= actionurl %> novalidate>
         {% csrf_token %}
-        <div class="form-group">
-            <div>
-                {{ reply_form.comment }}
+        <div class="form-group row">
+            <textarea class="form-control" cols="90" id="id_comment" name="comment" placeholder="댓글" rows="3" required=""><%= comment %></textarea>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                {{ reply_form.password }}
             </div>
+            <button class="btn btn-default btn-sm" type="submit">입력</button>
+            <button id="close_edit_reply" class="btn btn-default btn-sm" type="button">닫기</button>
         </div>
-        <hr>
-        <div class="form-group">
-            {{ reply_form.password }}
-        </div>
-        <button class="btn btn-default" type="submit">입력</button>
-        <button class="btn btn-default" type="button">닫기</button>
     </form>
     </div>
 </script>
