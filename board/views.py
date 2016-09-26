@@ -9,6 +9,7 @@ from django.contrib.auth import hashers
 
 #===========================================================================================
 # 페이지줄수
+SIMPLEBOARD_TITLE = "인코방"
 rowsPerPage = 25
 # HELP
 def get_client_ip(request):
@@ -20,6 +21,7 @@ def get_client_ip(request):
     return ip
 
 def board_home(request):
+    title=SIMPLEBOARD_TITLE
     # if searchStr == None:
     error = request.GET.get('error','')
     searchStr = request.GET.get('searchStr','')
@@ -43,10 +45,11 @@ def board_home(request):
         boards = paginator.page(1)
     except EmptyPage:
         boards = paginator.page(paginator.num_pages)
-    return render(request, 'lists.html', {'user':request.user,'boards': boards, 'searchStr':searchStr})
+    return render(request, 'lists.html', {'user':request.user,'boards': boards, 'searchStr':searchStr, 'title':title})
 
 #===========================================================================================
 def board_write(request):
+    title=SIMPLEBOARD_TITLE+" - 글쓰기"
     error = request.GET.get('error','')
     if not request.user.is_authenticated():
         return redirect('board_home')
@@ -62,10 +65,10 @@ def board_write(request):
     if form.is_valid():
         board_ = form.save()
         return redirect(reverse('board_view', kwargs={"board_id":board_.id})+'?page='+page+'&searchStr='+searchStr)
-    return render(request, 'writeBoard.html', {"form": form, 'page':page, 'searchStr':searchStr})
+    return render(request, 'writeBoard.html', {"form": form, 'page':page, 'searchStr':searchStr, 'title':title})
 
 def board_edit(request, board_id):
-    
+    title=SIMPLEBOARD_TITLE + " - 수정하기"
     if not request.user.is_authenticated():
         return redirect('board_home')
     page = request.GET.get('page',0)
@@ -81,7 +84,7 @@ def board_edit(request, board_id):
     if form.is_valid():
         board_ = form.save()
         return redirect(reverse('board_view', kwargs={'board_id':board_.id})+'?page='+page+'&searchStr='+searchStr)
-    return render(request, 'editBoard.html', {"form": form, "board_id": board_id, 'page':page, 'searchStr':searchStr})
+    return render(request, 'editBoard.html', {"form": form, "board_id": board_id, 'page':page, 'searchStr':searchStr, 'title':title})
 
 def board_delete(request, board_id):
     error = request.GET.get('error','')
@@ -95,9 +98,11 @@ def board_delete(request, board_id):
     return redirect(reverse('board_home')+'?page='+page+'&searchStr='+searchStr)
 
 def board_view(request, board_id):
+    title=SIMPLEBOARD_TITLE
     page = request.GET.get('page',0)
     searchStr = request.GET.get('searchStr','')
     board_ = Board.objects.get(id=board_id)
+    title = title + " - " + board_.subject 
     error = request.GET.get('error','')
     board_.hits+=1
     board_.save()
@@ -122,7 +127,7 @@ def board_view(request, board_id):
     # return render(request, 'lists.html', {'user':request.user,'boards': boards, 'searchStr':searchStr})
 
 
-    return render(request, 'viewBoard.html', {'reply_form':reply_form, 'boards': boards,  'board':board_, 'page':page, 'searchStr':searchStr, 'replys':replys, 'error':error})
+    return render(request, 'viewBoard.html', {'reply_form':reply_form, 'boards': boards,  'board':board_, 'page':page, 'searchStr':searchStr, 'replys':replys, 'error':error, 'title':title})
 
 
 def reply_write(request, board_id):
