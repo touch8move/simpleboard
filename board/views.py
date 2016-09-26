@@ -22,8 +22,8 @@ def get_client_ip(request):
 def board_home(request):
     # if searchStr == None:
     error = request.GET.get('error','')
-    searchStr = request.GET.get('searchStr')
-    page = request.GET.get('page')
+    searchStr = request.GET.get('searchStr','')
+    page = request.GET.get('page',0)
        
     if request.path == '/':
         return redirect('/board/')
@@ -50,8 +50,8 @@ def board_write(request):
     error = request.GET.get('error','')
     if not request.user.is_authenticated():
         return redirect('board_home')
-    page = request.GET.get('page')
-    searchStr = request.GET.get('searchStr')
+    page = request.GET.get('page',0)
+    searchStr = request.GET.get('searchStr','')
     
     # if request.POST:
     #     print("POST", request.POST.get('id'))
@@ -68,8 +68,8 @@ def board_edit(request, board_id):
     
     if not request.user.is_authenticated():
         return redirect('board_home')
-    page = request.GET.get('page')
-    searchStr = request.GET.get('searchStr')
+    page = request.GET.get('page',0)
+    searchStr = request.GET.get('searchStr','')
     
     if request.POST:
         board = Board.objects.get(id=board_id)
@@ -87,15 +87,15 @@ def board_delete(request, board_id):
     error = request.GET.get('error','')
     if not request.user.is_authenticated():
         return redirect('board_home')
-    page = request.GET.get('page')
-    searchStr = request.GET.get('searchStr')
+    page = request.GET.get('page',0)
+    searchStr = request.GET.get('searchStr','')
     board_ = Board.objects.get(id=board_id)
     board_.delete()
     # return redirect('board', page=page, searchStr=searchStr)
     return redirect(reverse('board_home')+'?page='+page+'&searchStr='+searchStr)
 
 def board_view(request, board_id):
-    page = request.GET.get('page')
+    page = request.GET.get('page',0)
     searchStr = request.GET.get('searchStr','')
     board_ = Board.objects.get(id=board_id)
     error = request.GET.get('error','')
@@ -126,8 +126,8 @@ def board_view(request, board_id):
 
 
 def reply_write(request, board_id):
-    page = request.GET.get('page')
-    searchStr = request.GET.get('searchStr')
+    page = request.GET.get('page',0)
+    searchStr = request.GET.get('searchStr','')
     parent_id=request.GET.get('parent', None)
     parent = None
     if parent_id is not None:
@@ -143,8 +143,9 @@ def reply_write(request, board_id):
     return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr)
 
 def reply_update(request, board_id, reply_id):
-    page = request.GET.get('page')
-    searchStr = request.GET.get('searchStr')
+    page = request.GET.get('page',0)
+    searchStr = request.GET.get('searchStr','')
+
     comment = request.POST.get('comment')
     password = request.POST.get('password')
 
@@ -165,8 +166,8 @@ def reply_update(request, board_id, reply_id):
 
 def reply_delete(request, board_id, reply_id):
     error = ""
-    page = request.GET.get('page')
-    searchStr = request.GET.get('searchStr')
+    page = request.GET.get('page',0)
+    searchStr = request.GET.get('searchStr','')
     reply = Reply.objects.get(id=reply_id)
     # print(reply.password)
     if reply is not None:
