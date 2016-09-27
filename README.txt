@@ -2,7 +2,7 @@
 [package]
 sudo apt-get update
 sudo apt-get install git nginx python3-dev mysql-client mysql-server libmysqlclient-dev
-sudo pip install virtualenv gunicorn
+sudo pip install virtualenv
 
 [source]
 git clone https://touch8me@bitbucket.org/touch8me/simpleboard.git
@@ -27,10 +27,17 @@ deploy/mysql-query.sql 실행
 env/bin/python simpleBoard/manage.py migrate
 
 
-
 [gunicorn]
 sudo ln -s /home/vagrant/simpleBoard/deploy/gunicorn-upstart.template.conf /etc/init/gunicorn.conf
+sudo initctl reload-configuration
+sudo start gunicorn
 
 [nginx]
+sudo service nginx stop
+file: simpleBoard/deploy/simpleboard_nginx.conf
+SERVER_NAME(Domain), USER_NAME 값 세팅
+file: simpleBoard/deploy/gunicorn-upstart.template.conf
+USER_NAME 값 세팅
+
 sudo ln -s /home/vagrant/simpleBoard/deploy/simpleboard_nginx.conf /etc/nginx/sites-available/simpleBoard
 sudo ln -s /etc/nginx/sites-available/simpleBoard /etc/nginx/sites-enabled/simpleBoard
