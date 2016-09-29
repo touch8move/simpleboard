@@ -31,7 +31,7 @@ def board_home(request):
         return redirect('/board/')
 
     if searchStr:
-        print ("searchStr", searchStr)
+        # print ("searchStr", searchStr)
         boardList = Board.objects.filter(subject__contains = searchStr).order_by('-id')
     else:
         searchStr = ''
@@ -110,7 +110,7 @@ def board_view(request, board_id):
     replys = board_.get_replys()
     boardList = None;
     if searchStr:
-        print ("searchStr", searchStr)
+        # print ("searchStr", searchStr)
         boardList = Board.objects.filter(subject__contains = searchStr).order_by('-id')
     else:
         searchStr = ''
@@ -144,7 +144,7 @@ def reply_write(request, board_id):
     if form.is_valid():
         board = Board.objects.get(id=board_id)    
         reply = form.save(for_board=board, ipaddress=ipaddress, parent=parent, depth=depth)
-        print ("reply write!!!")
+        # print ("reply write!!!")
     return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr)
 
 def reply_update(request, board_id, reply_id):
@@ -165,7 +165,7 @@ def reply_update(request, board_id, reply_id):
         reply.comment = comment
         reply.save()    
     
-    print ("reply update!!!")
+    # print ("reply update!!!")
     # return board_view(request, board_id)
     return redirect(reverse('board_view', kwargs={'board_id':board_id})+'?page='+page+'&searchStr='+searchStr+'&error='+error)
 
