@@ -1,3 +1,4 @@
+{% load arithmetic %}
 <table class=table>
     <tr class="small text-center">
         <td class="col-sm-1 center">번호</td>
@@ -8,7 +9,10 @@
         {% for boardRow in boards %}     
         <tr class="small text-center">
             <td>{{ boardRow.id }}</td>
-            <td class="text-left"><a href="{% url 'board_view' boardRow.id %}?page={{page}}&searchStr={{searchStr}}">{{ boardRow.subject }}</a> [{{boardRow.get_replys_count}}]</td>
+            <td class="text-left">
+                <a href="{% url 'board_view' boardRow.id %}?page={{page}}&searchStr={{searchStr}}">{{ boardRow.subject }}</a> [{{boardRow.get_replys_count}}]
+                {% if boardRow.created_date|new %} <img src="/static/img/new.gif"/> {% endif %}
+            </td>
             <td>{{ boardRow.created_date|date:"Y-m-d H:i:s" }}</td>
         </tr>       
         {% endfor %}
@@ -17,7 +21,7 @@
     {% endif %}
 </table>
 <!--pagination start-->
-{% load arithmetic %}
+
 <div class="text-center">
     <ul class="pagination">
         <li>
