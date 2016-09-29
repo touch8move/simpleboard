@@ -1,3 +1,8 @@
+/* visited link */
+a:visited {
+    color: grey;
+}
+
 hr{
     margin-top:10px;
     margin-bottom:10px;
