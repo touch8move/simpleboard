@@ -5,6 +5,9 @@
     tinymce.init({ selector:'textarea',
         max_width:"100%",
         max_height:700,
+        plugins: "media, image",
+        toolbar: "media, image",
+        media_live_embeds: true,
     });
 </script>
 <form class="form-horizontal" method='POST' action="{% url 'board_edit' board_id %}?page={{page}}&searchStr={{ searchStr }}" novalidate>
