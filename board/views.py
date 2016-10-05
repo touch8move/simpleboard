@@ -10,7 +10,7 @@ from django.contrib.auth import hashers
 #===========================================================================================
 # 페이지줄수
 SIMPLEBOARD_TITLE = "인코방"
-rowsPerPage = 25
+rowsPerPage = 2
 # HELP
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -25,10 +25,10 @@ def board_home(request):
     # if searchStr == None:
     error = request.GET.get('error','')
     searchStr = request.GET.get('searchStr','')
-    page = request.GET.get('page',0)
+    page = request.GET.get('page',1)
        
     if request.path == '/':
-        return redirect('/board/?page=1')
+        return redirect('/board/')
 
     if searchStr:
         # print ("searchStr", searchStr)
@@ -53,7 +53,7 @@ def board_write(request):
     error = request.GET.get('error','')
     if not request.user.is_authenticated():
         return redirect('board_home')
-    page = request.GET.get('page',0)
+    page = request.GET.get('page',1)
     searchStr = request.GET.get('searchStr','')
     
     # if request.POST:
@@ -71,7 +71,7 @@ def board_edit(request, board_id):
     title=SIMPLEBOARD_TITLE + " - 수정하기"
     if not request.user.is_authenticated():
         return redirect('board_home')
-    page = request.GET.get('page',0)
+    page = request.GET.get('page',1)
     searchStr = request.GET.get('searchStr','')
     
     if request.POST:
