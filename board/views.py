@@ -10,7 +10,7 @@ from django.contrib.auth import hashers
 #===========================================================================================
 # 페이지줄수
 SIMPLEBOARD_TITLE = "인코방"
-rowsPerPage = 2
+rowsPerPage = 25
 # HELP
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
