@@ -22,8 +22,8 @@ from account.views import account_login, account_logout, account_add, account_up
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', board_home, name='no'),
-    url(r'^board/', board_home, name='board_home'),
+    # url(r'^$', board_home, name='no'),
+    
     url(r'^write/', board_write, name='board_write'),
     url(r'^edit/(?P<board_id>\d+)/', board_edit, name='board_edit'),
     url(r'^view/(?P<board_id>\d+)/', board_view, name='board_view'),
@@ -38,4 +38,6 @@ urlpatterns = [
     url(r'^reply/write/(?P<board_id>\d+)/', reply_write, name='reply_write'),
     url(r'^reply/update/(?P<board_id>\d+)/(?P<reply_id>\d+)/', reply_update, name='reply_update'),
     url(r'^reply/delete/(?P<board_id>\d+)/(?P<reply_id>\d+)/', reply_delete, name='reply_delete'),
+    
+    url(r'^', board_home, name='board_home'),
 ]

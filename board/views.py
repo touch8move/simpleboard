@@ -27,8 +27,8 @@ def board_home(request):
     searchStr = request.GET.get('searchStr','')
     page = request.GET.get('page',1)
        
-    if request.path == '/':
-        return redirect('/board/')
+    # if request.path == '/':
+        # return redirect('/board/')
 
     if searchStr:
         # print ("searchStr", searchStr)
