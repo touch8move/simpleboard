@@ -45,7 +45,7 @@ def board_home(request):
         boards = paginator.page(1)
     except EmptyPage:
         boards = paginator.page(paginator.num_pages)
-    return render(request, 'lists.html', {'user':request.user,'boards': boards, 'searchStr':searchStr, 'title':title})
+    return render(request, 'lists.html', {'user':request.user,'page':page, 'boards': boards, 'searchStr':searchStr, 'title':title})
 
 #===========================================================================================
 def board_write(request):
